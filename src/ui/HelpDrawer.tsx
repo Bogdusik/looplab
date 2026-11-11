@@ -96,7 +96,9 @@ export function HelpDrawer() {
           </li>
           <li>Not yet modelled (M4): D-max, anti-gravity, TPA, dynamic notch, battery sag, pitch axis.</li>
           <li>
-            Spectrum dB scale follows MATLAB-style PSD; equivalence with PIDToolbox scaling is TODO(verify).
+            Spectrum dB follows the PIDToolbox convention (Brian White&apos;s PSSpec2d) at the selected
+            Blackbox logging rate. Noise levels are calibrated so the masterclass guidelines read sensibly; a
+            real log of the same craft may read differently.
           </li>
         </ul>
         <p style={{ color: 'var(--muted)', fontSize: 12 }}>

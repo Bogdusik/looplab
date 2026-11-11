@@ -136,7 +136,7 @@ export const useStore = create<AppState>(() => ({
     i: false,
     d: false,
     ff: false,
-    force: false,
+    force: true,
   },
   step: null,
   spectrum: null,
