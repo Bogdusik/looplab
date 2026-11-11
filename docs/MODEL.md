@@ -153,12 +153,12 @@ and snappy inputs gets hot within 40 s (FF 0 is markedly cooler). Labels: warm �
 - **Step response (ideal):** noise off, full pipeline, step aligned with an RX packet; response = filtered gyro.
   Metrics: latency to 50 % (primary), rise 10–90 %, overshoot, settling ±5 %, steady-state error (mean of last 10 %).
   Options: FF on/off (default off — a step has infinite stick speed, so FF fires one kick), RC smoothing on/off
-  (default off — Blackbox logs the smoothed setpoint, so PIDToolbox latency excludes it).
+  (default off — Blackbox logs the smoothed setpoint, so PIDtoolbox latency excludes it).
 - **Spectrum:** see §9a.
 
 ## 9a. Spectrum convention and noise calibration (`engine/spectrum.ts`, `engine/blackbox.ts`)
 
-**Reference:** PIDToolbox's spectral analysis by Brian White (`PSSpec2d.m`, Beer-Ware license). We follow its
+**Reference:** PIDtoolbox's spectral analysis by Brian White (`PSSpec2d.m`, Beer-Ware license). We follow its
 _convention_ only; no code was copied.
 
 ```

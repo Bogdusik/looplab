@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
 <rect width="760" height="360" fill="#ffffff"/>
 <text x="64" y="22" font-size="15" font-weight="600" fill="#111827">Master multiplier sweep — 5" freestyle preset (ideal step, FF off)</text>
-<text x="64" y="40" font-size="12" fill="#4b5563">Latency flattens around ×2 while D-term noise (2 kHz log, PIDToolbox scaling) climbs towards −10 dB.</text>
+<text x="64" y="40" font-size="12" fill="#4b5563">Latency flattens around ×2 while D-term noise (2 kHz log, PIDtoolbox scaling) climbs towards −10 dB.</text>
 <g stroke="#e5e7eb" stroke-width="1">
 <line x1="64" x2="64" y1="56" y2="288"/>
 <line x1="139.5555555555556" x2="139.5555555555556" y1="56" y2="288"/>

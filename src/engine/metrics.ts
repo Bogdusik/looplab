@@ -1,5 +1,5 @@
 export interface StepMetrics {
-  /** Time to reach 50 % of the step (PIDToolbox / Brian White "latency"), s. */
+  /** Time to reach 50 % of the step (PIDtoolbox / Brian White "latency"), s. */
   latency50: number;
   /** 10 % → 90 % rise time, s. */
   rise1090: number;
