@@ -120,7 +120,7 @@ describe('Blackbox decimation', () => {
   });
 });
 
-describe('Spec test 7 — metrics on an analytic 2nd-order system', () => {
+describe('metrics on an analytic 2nd-order system', () => {
   it.each([0.3, 0.5, 0.7, 0.9])('ζ = %s', (zeta) => {
     const wn = 2 * Math.PI * 20;
     const wd = wn * Math.sqrt(1 - zeta * zeta);

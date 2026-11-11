@@ -18,7 +18,7 @@ function fly(params: BfParams, seconds: number, jerky: boolean) {
   return Math.max(sim.out.tempL, sim.out.tempR);
 }
 
-describe('Motor temperature (qualitative calibration, spec §5.8)', () => {
+describe('Motor temperature (qualitative calibration)', () => {
   it('default 5" in a hover stays cool', () => {
     expect(heatLevel(fly(defaultBfParams('freestyle5'), 60, false))).toBe('cool');
   });

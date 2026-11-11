@@ -3,7 +3,7 @@ import { DEFAULT_FILTERS } from '../presets.ts';
 import { SIMPLIFIED_DEFAULTS, simplifiedFilters, simplifiedPids, type SimplifiedTuning } from '../sliders.ts';
 
 /**
- * Spec test 6 — slider positions → gains.
+ * Slider positions → gains.
  * Source: src/main/config/simplified_tuning.c calculateNewPidValues() / calculateNew*FilterValues()
  * with defaults from flight/pid.h (PID_ROLL_DEFAULT {45,80,30,F120}, PID_PITCH_DEFAULT {47,84,34,F125},
  * D_MAX_DEFAULT {40,46}) and sensors/gyro.h / flight/pid.h filter defaults, betaflight@f97bdbc.
@@ -11,7 +11,7 @@ import { SIMPLIFIED_DEFAULTS, simplifiedFilters, simplifiedPids, type Simplified
  */
 const s = (patch: Partial<SimplifiedTuning>): SimplifiedTuning => ({ ...SIMPLIFIED_DEFAULTS, ...patch });
 
-describe('Spec test 6 — simplified tuning sliders', () => {
+describe('simplified tuning sliders', () => {
   const cases: [
     string,
     Partial<SimplifiedTuning>,

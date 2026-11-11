@@ -44,7 +44,7 @@ function expectIdenticalPrefix(a: number[], b: number[]) {
   expect(maxDiff).toBe(0);
 }
 
-describe('Spec test 1 — render-rate invariance', () => {
+describe('render-rate invariance', () => {
   it('Betaflight mode: 60 / 144 / 240 Hz frames give bitwise-identical outputs', () => {
     const a = runBf(60, 1);
     const b = runBf(144, 1);
