@@ -31,7 +31,7 @@ describe('Motor temperature (qualitative calibration)', () => {
 
   it('7" with FF 1.0 and snappy inputs gets hot within 40 s; more FF = more heat', () => {
     const t = (ffMul: number) => {
-      const p = defaultBfParams('longRange7');
+      const p = defaultBfParams('longrange7');
       p.pid.gains.f = Math.round(p.pid.gains.f * ffMul);
       return fly(p, 40, true);
     };
