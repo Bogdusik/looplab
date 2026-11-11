@@ -39,14 +39,30 @@ export function LeftPanel() {
   }
   return (
     <section className="panel">
-      <div className="tabs" role="tablist">
+      <div className="tabs" role="tablist" aria-label="Betaflight settings">
         {TABS.map((t) => (
-          <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => actions.setLeftTab(t.id)}>
+          <button
+            key={t.id}
+            id={`tab-${t.id}`}
+            role="tab"
+            aria-selected={tab === t.id}
+            aria-controls="left-tabpanel"
+            tabIndex={tab === t.id ? 0 : -1}
+            onClick={() => actions.setLeftTab(t.id)}
+            onKeyDown={(e) => {
+              const i = TABS.findIndex((x) => x.id === tab);
+              const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+              if (!d) return;
+              const next = TABS[(i + d + TABS.length) % TABS.length]!;
+              actions.setLeftTab(next.id);
+              document.getElementById(`tab-${next.id}`)?.focus();
+            }}
+          >
             {t.label}
           </button>
         ))}
       </div>
-      <div className="panel-b">
+      <div className="panel-b" role="tabpanel" id="left-tabpanel" aria-labelledby={`tab-${tab}`}>
         {tab === 'tune' && <TunePanel />}
         {tab === 'filters' && <FiltersPanel />}
         {tab === 'drone' && <DronePanel />}

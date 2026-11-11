@@ -299,6 +299,12 @@ export function Scope() {
         <canvas
           ref={canvasRef}
           className="scope-canvas"
+          role="img"
+          aria-label={
+            mode === 'bf'
+              ? 'Scope: setpoint and gyro (deg/s) on top, PID terms and motor outputs below. Click to place time cursors.'
+              : 'Scope: target and follower on top, controller terms below. Click to place time cursors.'
+          }
           onPointerDown={(e) => {
             if (paused) drag.current = { x: e.clientX, offset: view.current.offset };
           }}

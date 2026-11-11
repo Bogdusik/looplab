@@ -45,6 +45,16 @@ export function StickTrack() {
         handleRef.current!.style.transform = `translateX(${xOf(stick.current)}px)`;
         spRef.current!.style.transform = `translateX(${xOf(scopeData.setpoint / range)}px)`;
         folRef.current!.style.transform = `translateX(${xOf(scopeData.follower / range)}px)`;
+        const v = stick.current.toFixed(2);
+        if (el.getAttribute('aria-valuenow') !== v) {
+          el.setAttribute('aria-valuenow', v);
+          el.setAttribute(
+            'aria-valuetext',
+            mode === 'bf'
+              ? `stick ${v}, setpoint ${scopeData.setpoint.toFixed(0)} degrees per second`
+              : `handle ${(stick.current * 100).toFixed(0)}`,
+          );
+        }
         if (readRef.current) {
           readRef.current.textContent =
             mode === 'bf'
@@ -68,52 +78,65 @@ export function StickTrack() {
 
   return (
     <div className="stage">
-      <div
-        ref={trackRef}
-        className="track"
-        role="slider"
-        aria-label="Stick"
-        aria-valuemin={-1}
-        aria-valuemax={1}
-        aria-valuenow={0}
-        tabIndex={0}
-        onPointerDown={(e) => {
-          dragging.current = true;
-          (e.target as HTMLElement).setPointerCapture(e.pointerId);
-          setFromEvent(e.clientX);
-        }}
-        onPointerMove={(e) => dragging.current && setFromEvent(e.clientX)}
-        onPointerUp={() => (dragging.current = false)}
-        onPointerCancel={() => (dragging.current = false)}
-        onKeyDown={(e) => {
-          const d = e.key === 'ArrowRight' ? 0.1 : e.key === 'ArrowLeft' ? -0.1 : 0;
-          if (d) {
-            stick.current = Math.max(-1, Math.min(1, stick.current + d));
-            sendStick(stick.current);
-            e.preventDefault();
-          }
-          if (e.key === '0' || e.key === 'Home') {
-            stick.current = 0;
-            sendStick(0);
-          }
-        }}
-      >
-        <div className="axis" />
-        <span className="lane-label" style={{ top: 6 }}>
-          {mode === 'bf' ? 'stick' : 'handle'}
+      <div style={{ position: 'relative' }}>
+        <span id="stick-help" className="sr-only">
+          Left and right arrow keys move the stick in 0.1 steps; Home or 0 centres it.
+          {mode === 'bf' ? ' With spring on, the stick re-centres when released.' : ''}
         </span>
-        <div className="lane stick" />
-        <span className="lane-label" style={{ top: 54 }}>
-          {mode === 'bf' ? 'setpoint ▸ gyro' : 'target ▸ follower'}
-        </span>
-        <div className="lane rate" />
-        <div ref={spRef} className="marker sp-marker" />
-        <div ref={folRef} className="marker follower" />
-        <div ref={handleRef} className="marker handle" />
-        <span className="readout" style={{ bottom: 4 }} ref={readRef} />
+        <div
+          ref={trackRef}
+          className="track"
+          role="slider"
+          aria-label={mode === 'bf' ? 'Roll stick' : 'Handle'}
+          aria-describedby="stick-help"
+          aria-valuemin={-1}
+          aria-valuemax={1}
+          aria-valuenow={0}
+          aria-valuetext="centred"
+          tabIndex={0}
+          onPointerDown={(e) => {
+            dragging.current = true;
+            (e.target as HTMLElement).setPointerCapture(e.pointerId);
+            setFromEvent(e.clientX);
+          }}
+          onPointerMove={(e) => dragging.current && setFromEvent(e.clientX)}
+          onPointerUp={() => (dragging.current = false)}
+          onPointerCancel={() => (dragging.current = false)}
+          onKeyDown={(e) => {
+            const d = e.key === 'ArrowRight' ? 0.1 : e.key === 'ArrowLeft' ? -0.1 : 0;
+            if (d) {
+              stick.current = Math.max(-1, Math.min(1, stick.current + d));
+              sendStick(stick.current);
+              e.preventDefault();
+            }
+            if (e.key === '0' || e.key === 'Home') {
+              stick.current = 0;
+              sendStick(0);
+            }
+          }}
+        >
+          <div className="axis" />
+          <span className="lane-label" style={{ top: 6 }}>
+            {mode === 'bf' ? 'stick' : 'handle'}
+          </span>
+          <div className="lane stick" />
+          <span className="lane-label" style={{ top: 54 }}>
+            {mode === 'bf' ? 'setpoint ▸ gyro' : 'target ▸ follower'}
+          </span>
+          <div className="lane rate" />
+          <div ref={spRef} className="marker sp-marker" />
+          <div ref={folRef} className="marker follower" />
+          <div ref={handleRef} className="marker handle" />
+          <span className="readout" style={{ bottom: 4 }} ref={readRef} aria-hidden="true" />
+        </div>
         {mode === 'bf' ? (
           <label className="toggle" style={{ position: 'absolute', right: 10, top: 2, fontSize: 11 }}>
-            <input type="checkbox" checked={spring} onChange={(e) => setSpring(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={spring}
+              onChange={(e) => setSpring(e.target.checked)}
+              aria-label="Spring: re-centre the stick on release"
+            />
             spring
           </label>
         ) : null}

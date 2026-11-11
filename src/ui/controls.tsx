@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 
 interface SliderProps {
   label: string;
@@ -13,12 +13,13 @@ interface SliderProps {
   disabled?: boolean;
 }
 
-/** Hover (desktop) or long-press (touch) tooltip state. */
+/** Hover (desktop), long-press (touch) or keyboard-focus tooltip state. */
 function useTip() {
   const [open, setOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   return {
     open,
+    focus: { onFocus: () => setOpen(true), onBlur: () => setOpen(false) },
     bind: {
       onMouseEnter: () => setOpen(true),
       onMouseLeave: () => setOpen(false),
@@ -33,7 +34,10 @@ function useTip() {
   };
 }
 
-/** Labelled range control. Double-click resets to default; hover/long-press explains it. */
+/**
+ * Labelled range control. Double-click (or Delete / Backspace when focused) resets to default;
+ * hover, long-press or keyboard focus shows the explanation, which is also exposed to screen readers.
+ */
 export function Slider({
   label,
   value,
@@ -47,6 +51,7 @@ export function Slider({
   disabled,
 }: SliderProps) {
   const tip = useTip();
+  const hintId = useId();
   const fill = ((value - min) / (max - min)) * 100;
   const changed = Math.abs(value - defaultValue) > step / 2;
   return (
@@ -68,14 +73,28 @@ export function Slider({
         value={value}
         disabled={disabled}
         aria-label={label}
+        aria-valuetext={format(value)}
+        aria-describedby={hint ? hintId : undefined}
         style={{ ['--fill' as string]: `${Math.max(0, Math.min(100, fill))}%` }}
         onChange={(e) => onChange(Number(e.target.value))}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === 'Delete' || e.key === 'Backspace')) {
+            e.preventDefault();
+            onChange(defaultValue);
+          }
+        }}
+        {...tip.focus}
       />
+      {hint ? (
+        <span id={hintId} className="sr-only">
+          {hint} Default {format(defaultValue)}; press Delete to reset.
+        </span>
+      ) : null}
       {tip.open && hint ? (
-        <div className="tip" role="tooltip">
+        <div className="tip" aria-hidden="true">
           {hint}
           <div style={{ marginTop: 4, color: 'var(--muted)' }}>
-            Double-click to reset ({format(defaultValue)}).
+            Double-click or press Delete to reset ({format(defaultValue)}).
           </div>
         </div>
       ) : null}
@@ -92,14 +111,26 @@ interface ToggleProps {
 
 export function Toggle({ label, checked, onChange, hint }: ToggleProps) {
   const tip = useTip();
+  const hintId = useId();
   return (
     <div className="ctl" style={{ padding: 0 }}>
       <label className="toggle" {...tip.bind}>
-        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+        <input
+          type="checkbox"
+          checked={checked}
+          aria-describedby={hint ? hintId : undefined}
+          onChange={(e) => onChange(e.target.checked)}
+          {...tip.focus}
+        />
         {label}
       </label>
+      {hint ? (
+        <span id={hintId} className="sr-only">
+          {hint}
+        </span>
+      ) : null}
       {tip.open && hint ? (
-        <div className="tip" role="tooltip">
+        <div className="tip" aria-hidden="true">
           {hint}
         </div>
       ) : null}
