@@ -198,7 +198,7 @@ const whoop: DroneParams = {
 export const DRONE_PRESETS: Record<string, DroneParams> = {
   whoop,
   freestyle5,
-  longRange7,
+  longrange7: longRange7,
 };
 
 export const DEFAULT_DRONE_ID = 'freestyle5';

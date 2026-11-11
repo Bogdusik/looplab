@@ -61,3 +61,13 @@ describe('RC smoothing and feedforward (rc.c)', () => {
     expect(rc.setpoint).toBe(actualRate(0.5, DEFAULT_RATES));
   });
 });
+
+describe('Drone presets', () => {
+  it('are keyed by their id (the UI and share links select presets by id)', async () => {
+    const { DRONE_PRESETS, defaultBfParams } = await import('../presets.ts');
+    for (const [key, d] of Object.entries(DRONE_PRESETS)) {
+      expect(d.id).toBe(key);
+      expect(defaultBfParams(d.id).drone.id).toBe(d.id);
+    }
+  });
+});
