@@ -23,8 +23,8 @@ export type ClassicChannel = (typeof CLASSIC_CHANNELS)[number];
 
 /** Scope sample rate (Hz) for both modes. */
 export const SCOPE_HZ = 1000;
-/** Spectrum analysis rate ("Blackbox log rate"). */
-export const SPECTRUM_FS = 4000;
+/** Seconds of decimated log kept for the spectrum. */
+export const SPECTRUM_SECONDS = 6;
 
 export interface StepOptionsMsg {
   feedforward: boolean;
@@ -36,7 +36,8 @@ export type ToWorker =
   | { type: 'stick'; value: number }
   | { type: 'control'; paused: boolean; speed: number }
   | { type: 'reset' }
-  | { type: 'stepOptions'; options: StepOptionsMsg };
+  | { type: 'stepOptions'; options: StepOptionsMsg }
+  | { type: 'analysis'; blackboxHz: number };
 
 export interface FrameMsg {
   type: 'frame';
@@ -74,6 +75,8 @@ export interface SpectrumMsg {
   motorHz: [number, number];
   rpmMinHz: number | null;
   seconds: number;
+  /** Blackbox log rate the spectrum was computed at, Hz. */
+  fs: number;
 }
 
 export interface StatusMsg {

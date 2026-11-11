@@ -3,14 +3,15 @@ import { BfSim } from '../engine/bfsim.ts';
 import { classicStepResponse, ClassicSim, type ClassicParams } from '../engine/classic.ts';
 import { Ring } from '../engine/ring.ts';
 import { Runner } from '../engine/runner.ts';
-import { toDb, welch } from '../engine/spectrum.ts';
+import { BlackboxDecimator, DEFAULT_BLACKBOX_HZ } from '../engine/blackbox.ts';
+import { spectrumNfft, toDb, welch } from '../engine/spectrum.ts';
 import { DEFAULT_STEP_OPTIONS, idealStepResponse } from '../engine/stepResponse.ts';
 import type { BfParams } from '../engine/types.ts';
 import {
   BF_CHANNELS,
   CLASSIC_CHANNELS,
   SCOPE_HZ,
-  SPECTRUM_FS,
+  SPECTRUM_SECONDS,
   type FromWorker,
   type Mode,
   type StepOptionsMsg,
@@ -21,8 +22,6 @@ declare const self: DedicatedWorkerGlobalScope;
 
 const TICK_MS = 16;
 const MAX_FRAME_SAMPLES = 400;
-const SPECTRUM_N = 16384;
-const SPECTRUM_NFFT = 1024;
 const SPECTRUM_MAX_HZ = 1000;
 
 let mode: Mode = 'bf';
@@ -43,10 +42,20 @@ let frameN = 0;
 let frameT0 = 0;
 let decim = 8;
 
-// spectrum rings (4 kHz)
-const preRing = new Ring(SPECTRUM_N);
-const postRing = new Ring(SPECTRUM_N);
-const dRing = new Ring(SPECTRUM_N);
+// spectrum: plain Blackbox-style decimation to the log rate
+let blackboxHz: number = DEFAULT_BLACKBOX_HZ;
+let decimator = new BlackboxDecimator(8000, blackboxHz);
+let preRing = new Ring(SPECTRUM_SECONDS * blackboxHz);
+let postRing = new Ring(SPECTRUM_SECONDS * blackboxHz);
+let dRing = new Ring(SPECTRUM_SECONDS * blackboxHz);
+
+function resetSpectrum(gyroHz: number) {
+  decimator = new BlackboxDecimator(gyroHz, blackboxHz);
+  const cap = Math.round(SPECTRUM_SECONDS * decimator.logHz);
+  preRing = new Ring(cap);
+  postRing = new Ring(cap);
+  dRing = new Ring(cap);
+}
 let lastSpectrum = 0;
 
 // status accumulation
@@ -65,9 +74,7 @@ function allocFrame(nch: number) {
 
 function rebuild(keepThermal = false) {
   if (!bfParams || !classicParams) return;
-  preRing.clear();
-  postRing.clear();
-  dRing.clear();
+  resetSpectrum(bfParams.loop.gyroHz);
   if (mode === 'bf') {
     const prev = bf;
     bf = new BfSim(bfParams);
@@ -169,11 +176,13 @@ function flushFrame() {
 }
 
 function sendSpectrum() {
-  if (!bf || preRing.length < SPECTRUM_NFFT * 2) return;
-  const pre = welch(preRing.toArray(), SPECTRUM_FS, SPECTRUM_NFFT);
-  const postS = welch(postRing.toArray(), SPECTRUM_FS, SPECTRUM_NFFT);
-  const dS = welch(dRing.toArray(), SPECTRUM_FS, SPECTRUM_NFFT);
-  const bins = pre.f.findIndex((f) => f > SPECTRUM_MAX_HZ);
+  const fs = decimator.logHz;
+  const nfft = spectrumNfft(fs);
+  if (!bf || preRing.length < nfft * 2) return;
+  const pre = welch(preRing.toArray(), fs, nfft);
+  const postS = welch(postRing.toArray(), fs, nfft);
+  const dS = welch(dRing.toArray(), fs, nfft);
+  const bins = pre.f.findIndex((f) => f > Math.min(SPECTRUM_MAX_HZ, fs / 2));
   const n = bins < 0 ? pre.f.length : bins;
   const f = new Float32Array(n);
   const a = new Float32Array(n);
@@ -195,7 +204,8 @@ function sendSpectrum() {
       dterm: c,
       motorHz: [bf.out.hzL, bf.out.hzR],
       rpmMinHz: rpm.enabled ? rpm.minHz : null,
-      seconds: preRing.length / SPECTRUM_FS,
+      seconds: preRing.length / fs,
+      fs,
     },
     [f.buffer, a.buffer, b.buffer, c.buffer],
   );
@@ -228,7 +238,6 @@ function tick() {
   if (bf) {
     const sim = bf;
     const r = runner as Runner<BfSim>;
-    const specDecim = Math.round(sim.params.loop.gyroHz / SPECTRUM_FS);
     r.frame(
       dt,
       () => sim.setStick(stick),
@@ -239,7 +248,7 @@ function tick() {
           pidCount++;
           satCount += o.saturated;
         }
-        if (i % specDecim === 0) {
+        if (decimator.tick()) {
           preRing.push(o.gyroRaw);
           postRing.push(o.gyroFilt);
           dRing.push(o.d);
@@ -305,6 +314,10 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
       break;
     case 'reset':
       rebuild();
+      break;
+    case 'analysis':
+      blackboxHz = m.blackboxHz;
+      if (bfParams) resetSpectrum(bfParams.loop.gyroHz);
       break;
     case 'stepOptions':
       stepOptions = m.options;

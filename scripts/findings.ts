@@ -13,7 +13,8 @@ import { BfSim } from '../src/engine/bfsim.ts';
 import { CLASSIC_DEFAULTS, ClassicSim, LegacyClassicSim, type ClassicParams } from '../src/engine/classic.ts';
 import { defaultBfParams } from '../src/engine/presets.ts';
 import { SIMPLIFIED_DEFAULTS, simplifiedPids } from '../src/engine/sliders.ts';
-import { toDb, welch } from '../src/engine/spectrum.ts';
+import { BlackboxDecimator, DEFAULT_BLACKBOX_HZ } from '../src/engine/blackbox.ts';
+import { spectrumNfft, toDb, welch } from '../src/engine/spectrum.ts';
 import { DEFAULT_STEP_OPTIONS, idealStepResponse } from '../src/engine/stepResponse.ts';
 import { linePlot } from './svgplot.ts';
 
@@ -185,7 +186,7 @@ const COLORS = { c60: '#2563eb', c144: '#d97706', c240: '#dc2626', fixed: '#0596
 // Masterclass lesson — master multiplier sweep on the default 5" (README plot)
 // ------------------------------------------------------------------------------------------------
 {
-  const masters = [60, 80, 100, 120, 140, 160, 180, 200, 220];
+  const masters = [60, 80, 100, 120, 140, 160, 180, 200, 220, 240];
   const latency: number[] = [];
   const overshoot: number[] = [];
   const dtermPeak: number[] = [];
@@ -198,17 +199,18 @@ const COLORS = { c60: '#2563eb', c144: '#d97706', c240: '#dc2626', fixed: '#0596
     overshoot.push(r.metrics.overshootPct);
     const sim = new BfSim(p);
     sim.run(8000);
-    const n = 4000 * 4;
-    const d = new Float64Array(n);
-    for (let i = 0; i < n; i++) {
+    // D-term spectrum on the default 2 kHz Blackbox stream, PIDToolbox (PSSpec2d) scaling
+    const fs = DEFAULT_BLACKBOX_HZ;
+    const dec = new BlackboxDecimator(p.loop.gyroHz, fs);
+    const d: number[] = [];
+    for (let i = 0; i < p.loop.gyroHz * 6; i++) {
       sim.step();
-      sim.step();
-      d[i] = sim.out.d;
+      if (dec.tick()) d.push(sim.out.d);
     }
-    const s = welch(d, 4000, 1024);
+    const s = welch(d, fs, spectrumNfft(fs));
     let mx = -Infinity;
     for (let k = 0; k < s.f.length; k++)
-      if (s.f[k]! >= 20 && s.f[k]! <= 1000) mx = Math.max(mx, toDb(s.psd[k]!));
+      if (s.f[k]! >= 20 && s.f[k]! <= fs / 2) mx = Math.max(mx, toDb(s.psd[k]!));
     dtermPeak.push(mx);
   }
   const x = masters.map((m) => m / 100);
@@ -217,7 +219,8 @@ const COLORS = { c60: '#2563eb', c144: '#d97706', c240: '#dc2626', fixed: '#0596
     'lesson-master-multiplier.svg',
     linePlot({
       title: 'Master multiplier sweep — 5" freestyle preset (ideal step, FF off)',
-      subtitle: 'Latency improvement flattens while D-term noise climbs towards the −10 dB guideline.',
+      subtitle:
+        'Latency flattens around ×2 while D-term noise (2 kHz log, PIDToolbox scaling) climbs towards −10 dB.',
       xLabel: 'master multiplier',
       yLabel: 'ms  /  %  /  dB',
       yRange: [-40, 40],
