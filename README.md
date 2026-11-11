@@ -11,6 +11,8 @@ rate loop react. Look at the spectrum and the step response, and work through th
 
 **Live demo:** https://bogdusik.github.io/looplab/
 
+![Demo: drag the stick, the scope reacts; sweep Damping on the 7" preset and the step response loses its overshoot](docs/img/demo.gif)
+
 ![LoopLab — Betaflight mode, 5" preset](docs/img/screenshot.png)
 
 <p>
