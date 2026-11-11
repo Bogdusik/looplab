@@ -47,8 +47,8 @@ export const CLASSIC_TARGET_TAU = -(1 / 60) / Math.log(0.85);
 export const CLASSIC_D_LPF_HZ = 30;
 export const INTEGRAL_LIMIT = 200;
 /** Heat display thresholds (fixed-step model). */
-export const CLASSIC_HEAT_WARM = 2;
-export const CLASSIC_HEAT_HOT = 4;
+export const CLASSIC_HEAT_WARM = 40;
+export const CLASSIC_HEAT_HOT = 70;
 
 export interface ClassicOut {
   t: number;
