@@ -129,7 +129,7 @@ const longRange7: DroneParams = {
   cells: 6,
   voltsPerCell: 3.9,
   kvLoadFactor: 0.78,
-  tauMotorS: 0.045,
+  tauMotorS: 0.032,
   hoverThrottle: 0.4,
   idle: 0.05,
   motorMassKg: 0.065,
