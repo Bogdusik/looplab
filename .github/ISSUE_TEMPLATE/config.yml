@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live demo
+    url: https://bogdusik.github.io/looplab/
+    about: Try it first — the Share button creates a link with your exact settings.
