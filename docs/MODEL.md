@@ -10,12 +10,12 @@ command/output 0…1, PID terms in Betaflight "PID units" (±500 = full authorit
 
 | Quantity                       | Value                                                          | Source                                                                 |
 | ------------------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Physics / gyro sample step `h` | 1/8000 s                                                       | spec                                                                   |
+| Physics / gyro sample step `h` | 1/8000 s                                                       | design choice                                                          |
 | PID loop                       | every `pid_process_denom` samples; default **1** (8 kHz)       | `flight/pid.c` `DEFAULT_PID_PROCESS_DENOM` (targets may override to 2) |
 | Render → physics               | accumulator, integer steps per frame, catch-up capped at 0.1 s | —                                                                      |
 | Randomness                     | one seeded mulberry32 stream per sim (+ forks)                 | —                                                                      |
 
-Same seed + same per-step input ⇒ bitwise-identical output at any render rate (spec test 1).
+Same seed + same per-step input ⇒ bitwise-identical output at any render rate (`render-invariance.test.ts`).
 Order inside one step: RC packet sampling → actuators (delay line, motors, rigid body) → gyro sample + LPF2 → (PID tick:
 RC processing, RPM notches, LPF1, PID, mixer, thermal). A command computed at step _k_ acts at step _k + 1 + n_delay_.
 
@@ -114,7 +114,7 @@ compute delay.
 Per motor and harmonic k = 1…3: `A_k · balance · (Ω/Ω_hover)² · sin(φ)`, `φ += k·Ω·(1 + j)·h`, with `j` an
 Ornstein–Uhlenbeck random walk (σ = `jitter`, 0.2 s correlation), random initial phases and signs. Plus white
 "electrical" noise and an optional frame resonance (2nd-order resonator at `frameHz`, `Q`, driven by white noise, scaled
-to an RMS). Different left/right RPM (CG offset) ⇒ two peak clusters (spec test 8).
+to an RMS). Different left/right RPM (CG offset) ⇒ two peak clusters (`noise.test.ts`).
 
 ## 7. Filters (`engine/filters.ts`, `engine/gyro.ts`) — `common/filter.c`, `sensors/gyro*.c`, `flight/rpm_filter.c`
 

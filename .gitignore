@@ -8,3 +8,6 @@ coverage
 !.env.example
 .playwright-mcp
 /screens-tmp
+
+# internal notes (spec, plan) — kept locally, not published
+/dev-notes/
