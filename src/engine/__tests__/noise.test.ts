@@ -23,7 +23,7 @@ function hoverSpectrum(mutate: (p: BfParams) => void, seconds = 6) {
 const near = (peaks: { f: number }[], f: number, tol: number) =>
   peaks.some((pk) => Math.abs(pk.f / f - 1) < tol);
 
-describe('Spec test 8 — noise model', () => {
+describe('noise model', () => {
   it('spectral peaks sit at motor RPM/60 × harmonic (±2 %)', () => {
     const { spec, hzL, hzR } = hoverSpectrum((p) => {
       p.drone.noise.motorSpread = 0;

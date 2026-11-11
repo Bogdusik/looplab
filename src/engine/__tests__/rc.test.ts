@@ -11,7 +11,7 @@ describe('ACTUAL rates (rc.c applyActualRates)', () => {
     expect(actualRate(0.5, DEFAULT_RATES)).toBeCloseTo(0.5 * 70 + 600 * 0.25, 9);
   });
   it('expo flattens the middle', () => {
-    const mine = RATE_PRESETS.mine!.rates;
+    const mine = RATE_PRESETS.smoothFreestyle!.rates;
     expect(actualRate(1, mine)).toBeCloseTo(670, 9);
     expect(actualRate(0.5, mine)).toBeLessThan(actualRate(0.5, { ...mine, expo: 0 }));
   });
@@ -59,5 +59,15 @@ describe('RC smoothing and feedforward (rc.c)', () => {
     rc.onPacket(0.5);
     rc.tick();
     expect(rc.setpoint).toBe(actualRate(0.5, DEFAULT_RATES));
+  });
+});
+
+describe('Drone presets', () => {
+  it('are keyed by their id (the UI and share links select presets by id)', async () => {
+    const { DRONE_PRESETS, defaultBfParams } = await import('../presets.ts');
+    for (const [key, d] of Object.entries(DRONE_PRESETS)) {
+      expect(d.id).toBe(key);
+      expect(defaultBfParams(d.id).drone.id).toBe(d.id);
+    }
   });
 });

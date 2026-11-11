@@ -10,12 +10,12 @@ command/output 0…1, PID terms in Betaflight "PID units" (±500 = full authorit
 
 | Quantity                       | Value                                                          | Source                                                                 |
 | ------------------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Physics / gyro sample step `h` | 1/8000 s                                                       | spec                                                                   |
+| Physics / gyro sample step `h` | 1/8000 s                                                       | design choice                                                          |
 | PID loop                       | every `pid_process_denom` samples; default **1** (8 kHz)       | `flight/pid.c` `DEFAULT_PID_PROCESS_DENOM` (targets may override to 2) |
 | Render → physics               | accumulator, integer steps per frame, catch-up capped at 0.1 s | —                                                                      |
 | Randomness                     | one seeded mulberry32 stream per sim (+ forks)                 | —                                                                      |
 
-Same seed + same per-step input ⇒ bitwise-identical output at any render rate (spec test 1).
+Same seed + same per-step input ⇒ bitwise-identical output at any render rate (`render-invariance.test.ts`).
 Order inside one step: RC packet sampling → actuators (delay line, motors, rigid body) → gyro sample + LPF2 → (PID tick:
 RC processing, RPM notches, LPF1, PID, mixer, thermal). A command computed at step _k_ acts at step _k + 1 + n_delay_.
 
@@ -28,7 +28,7 @@ expof  = |x| · (x⁵·expo + x·(1 − expo))
 rate   = x·center + max(0, max − center)·expof            (clamped to ±1998, rate_limit)
 ```
 
-Default 70 / 670 / 0.00 (`fc/controlrate_profile.c`: rcRates 7, rates 67, expo 0). Presets: "My rates" 50/670/0.45,
+Default 70 / 670 / 0.00 (`fc/controlrate_profile.c`: rcRates 7, rates 67, expo 0). Presets: "Smooth freestyle" 50/670/0.45,
 "Linear tuning rates" 400/400/0.
 
 **RC link.** Sample-and-hold of the stick at `packetHz` (50/150/250/500/1000), integer phase accumulator, stick
@@ -54,7 +54,10 @@ as-is. Defaults: averaging 2-point, smooth 65, jitter 7, boost 15, max-rate-limi
 **RC smoothing** — `rc.c processRcSmoothingFilter()`, per PID loop: PT3 on setpoint and on FF with cutoff
 `max(15, rxRate · 1.5 / (1 + auto_factor/10))` (`rcSmoothingSetFilterCutoffs()`), default factor 30 → 93.75 Hz at 250 Hz.
 
-RC-link "flight style" presets (Race / Freestyle / Cinematic) — **TODO(verify)** against `betaflight/firmware-presets`.
+RC-link "flight style" presets follow `betaflight/firmware-presets@bc81bff` `presets/2026.6/rc_link/crsf/crsf_auto.txt`.
+The feedforward settings come from `rc_link/defaults.txt` (2-point, 65, 7, 15) and are the same for every style. The style
+only sets `rc_smoothing_auto_factor`: Racing 25, Freestyle 50, HD Freestyle 70, Cinematic 90, Ultra Cinematic 180.
+At 250 Hz that gives smoothing cutoffs of 107 / 62.5 / 46.9 / 37.5 / 19.7 Hz.
 
 ## 3. PID (`engine/pid.ts`) — `flight/pid.c pidController()`, one acro axis
 
@@ -114,7 +117,7 @@ compute delay.
 Per motor and harmonic k = 1…3: `A_k · balance · (Ω/Ω_hover)² · sin(φ)`, `φ += k·Ω·(1 + j)·h`, with `j` an
 Ornstein–Uhlenbeck random walk (σ = `jitter`, 0.2 s correlation), random initial phases and signs. Plus white
 "electrical" noise and an optional frame resonance (2nd-order resonator at `frameHz`, `Q`, driven by white noise, scaled
-to an RMS). Different left/right RPM (CG offset) ⇒ two peak clusters (spec test 8).
+to an RMS). Different left/right RPM (CG offset) ⇒ two peak clusters (`noise.test.ts`).
 
 ## 7. Filters (`engine/filters.ts`, `engine/gyro.ts`) — `common/filter.c`, `sensors/gyro*.c`, `flight/rpm_filter.c`
 
@@ -150,12 +153,12 @@ and snappy inputs gets hot within 40 s (FF 0 is markedly cooler). Labels: warm �
 - **Step response (ideal):** noise off, full pipeline, step aligned with an RX packet; response = filtered gyro.
   Metrics: latency to 50 % (primary), rise 10–90 %, overshoot, settling ±5 %, steady-state error (mean of last 10 %).
   Options: FF on/off (default off — a step has infinite stick speed, so FF fires one kick), RC smoothing on/off
-  (default off — Blackbox logs the smoothed setpoint, so PIDToolbox latency excludes it).
+  (default off — Blackbox logs the smoothed setpoint, so PIDtoolbox latency excludes it).
 - **Spectrum:** see §9a.
 
 ## 9a. Spectrum convention and noise calibration (`engine/spectrum.ts`, `engine/blackbox.ts`)
 
-**Reference:** PIDToolbox's spectral analysis by Brian White (`PSSpec2d.m`, Beer-Ware license). We follow its
+**Reference:** PIDtoolbox's spectral analysis by Brian White (`PSSpec2d.m`, Beer-Ware license). We follow its
 _convention_ only; no code was copied.
 
 ```

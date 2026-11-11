@@ -61,11 +61,20 @@ export function StepResponse() {
         <span>{mode === 'bf' ? `ideal · ${step?.amplitude.toFixed(0) ?? '—'}°/s` : 'classic · 0 → 50'}</span>
       }
     >
-      <div ref={host} className="uplot-host" />
+      <div
+        ref={host}
+        className="uplot-host"
+        role="img"
+        aria-label={
+          m
+            ? `Step response: latency to 50 percent ${ms(m.latency50)}, overshoot ${m.overshootPct.toFixed(1)} percent.`
+            : 'Step response'
+        }
+      />
       <div className="metrics">
         <div
           className="metric primary"
-          title="Time to reach 50 % of the step — the latency figure PIDToolbox and Brian White use."
+          title="Time to reach 50 % of the step — the latency figure PIDtoolbox and Brian White use."
         >
           <div className="k">Latency (50 %)</div>
           <div className="v">{m ? ms(m.latency50) : '—'}</div>
@@ -99,13 +108,13 @@ export function StepResponse() {
             label="Include feed-forward"
             checked={ff}
             onChange={(v) => actions.setStepOptions({ ff: v })}
-            hint="FF reacts to how fast the setpoint changes. A step changes it infinitely fast, so FF fires one big kick and the curve no longer shows the PID loop itself. PIDToolbox-style tuning looks at the response with FF off (or with real stick inputs)."
+            hint="FF reacts to how fast the setpoint changes. A step changes it infinitely fast, so FF fires one big kick and the curve no longer shows the PID loop itself. PIDtoolbox-style tuning looks at the response with FF off (or with real stick inputs)."
           />
           <Toggle
             label="Include RC smoothing"
             checked={rcs}
             onChange={(v) => actions.setStepOptions({ rcSmoothing: v })}
-            hint="Blackbox logs the already-smoothed setpoint, so PIDToolbox latency excludes RC smoothing. Turn this on to see the extra delay from stick to setpoint."
+            hint="Blackbox logs the already-smoothed setpoint, so PIDtoolbox latency excludes RC smoothing. Turn this on to see the extra delay from stick to setpoint."
           />
         </div>
       ) : null}

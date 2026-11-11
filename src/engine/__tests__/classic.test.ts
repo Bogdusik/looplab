@@ -10,7 +10,7 @@ import { criticalGain, tailRms } from '../stability.ts';
 
 const quiet: ClassicParams = { ...CLASSIC_DEFAULTS, noise: 0 };
 
-describe('Spec test 2 — delay correctness (bug #1 regression)', () => {
+describe('delay correctness (bug #1 regression)', () => {
   it.each([5, 15, 30])(
     'applied force is exactly the force from %d ms earlier, even while the handle moves',
     (ms) => {
@@ -43,7 +43,7 @@ describe('Spec test 2 — delay correctness (bug #1 regression)', () => {
   });
 });
 
-describe('Spec test 9 — Classic mode reproduces the qualitative lessons', () => {
+describe('Classic mode reproduces the qualitative lessons', () => {
   it('more P → faster and more overshoot', () => {
     const lo = classicStepResponse({ ...quiet, kp: 4 }).metrics;
     const hi = classicStepResponse({ ...quiet, kp: 14 }).metrics;
@@ -108,7 +108,7 @@ export function classicCriticalP(delayMs: number, kd = 2): number {
   );
 }
 
-describe('Spec test 5 (Classic) — critical P decreases monotonically with delay', () => {
+describe('Classic — critical P decreases monotonically with delay', () => {
   it('delay 5 → 15 → 30 → 60 ms', () => {
     const crit = [5, 15, 30, 60].map((d) => classicCriticalP(d));
     for (let i = 1; i < crit.length; i++) expect(crit[i]).toBeLessThan(crit[i - 1]!);

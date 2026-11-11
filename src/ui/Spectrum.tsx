@@ -18,17 +18,19 @@ interface RefLine {
 }
 
 const GYRO_LINES: RefLine[] = [
-  { db: -25, color: 'rgba(244,63,94,0.75)', label: '−25 dB investigate', at: 1 },
+  { db: -25, color: 'rgba(255,112,136,0.75)', label: '−25 dB investigate', at: 1 },
   { db: -30, color: 'rgba(251,191,36,0.75)', label: '−30 dB', at: 0.42 },
   { db: -40, color: 'rgba(74,222,128,0.75)', label: '−40 dB great', at: 1 },
 ];
+/** Same colour at full opacity, for label text (contrast). */
+const opaque = (rgba: string) => rgba.replace(/,\s*[\d.]+\)$/, ',1)');
 const DTERM_LINES: RefLine[] = [
-  { db: -10, color: 'rgba(244,63,94,0.8)', label: '−10 dB D-term guideline', at: 1 },
+  { db: -10, color: 'rgba(255,112,136,0.8)', label: '−10 dB D-term guideline', at: 1 },
 ];
 
 /**
  * PSD of pre-filter gyro, post-filter gyro and the D term on the Blackbox-decimated stream,
- * PIDToolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided ×2, 10·log10.
+ * PIDtoolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided ×2, 10·log10.
  */
 export function Spectrum() {
   const spec = useStore((s) => s.spectrum);
@@ -131,8 +133,8 @@ export function Spectrum() {
               const y = u.valToPos(l.db, 'y', true);
               if (y < top || y > top + height) return;
               const dy = (i % 2 === 0 ? -9 : 9) * px;
-              if (l.at >= 1) plate(l.label, left + width - 4 * px, y + dy, l.color, 'right');
-              else plate(l.label, left + width * l.at, y + dy, l.color, 'left');
+              if (l.at >= 1) plate(l.label, left + width - 4 * px, y + dy, opaque(l.color), 'right');
+              else plate(l.label, left + width * l.at, y + dy, opaque(l.color), 'left');
             });
             const rm = markers.current.rpmMin;
             if (rm) {
@@ -168,7 +170,12 @@ export function Spectrum() {
         </div>
       }
     >
-      <div ref={host} className="uplot-host" />
+      <div
+        ref={host}
+        className="uplot-host"
+        role="img"
+        aria-label={`Power spectral density, ${which === 'gyro' ? 'gyro before and after filtering' : 'D term'}, 0 to ${fMax} Hz, in dB with masterclass reference lines.`}
+      />
       <label className="ctl-row" style={{ margin: '8px 0 2px' }}>
         <span
           className="ctl-label"
@@ -201,7 +208,7 @@ export function Spectrum() {
         )}
       </p>
       <p className="note">
-        PIDToolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided, 10·log10; 0.5 s segments averaged.
+        PIDtoolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided, 10·log10; 0.5 s segments averaged.
         {blackboxHz === 1600 || blackboxHz === 3200
           ? ' 1.6 / 3.2 kHz are native to 3.2 kHz gyros; here they are picked from the 8 kHz stream.'
           : ''}

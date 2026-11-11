@@ -29,7 +29,7 @@ function bfCriticalP(mutate: (p: BfParams) => void): number {
   );
 }
 
-describe('Spec test 5 (Betaflight mode) — stability trend', () => {
+describe('Betaflight mode — stability trend', () => {
   it('critical P decreases monotonically as transport delay increases', () => {
     const crit = [0.25, 1, 2, 4].map((ms) => bfCriticalP((p) => (p.drone.transportDelayS = ms / 1000)));
     for (let i = 1; i < crit.length; i++) expect(crit[i]).toBeLessThan(crit[i - 1]!);

@@ -1,10 +1,17 @@
 # LoopLab
 
+[![CI](https://github.com/Bogdusik/looplab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Bogdusik/looplab/actions/workflows/ci.yml)
+[![Deploy to GitHub Pages](https://github.com/Bogdusik/looplab/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/Bogdusik/looplab/actions/workflows/deploy.yml)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/live%20demo-bogdusik.github.io%2Flooplab-ffb020.svg)](https://bogdusik.github.io/looplab/)
+
 **A Betaflight-faithful PID and filter simulator that runs in the browser.** Drag a stick and see a virtual quad's
 rate loop react. Look at the spectrum and the step response, and work through the
 [Bardwell × Brian White masterclass](https://www.youtube.com/watch?v=FsJNHI2HWlg) lessons before you touch a real quad.
 
 **Live demo:** https://bogdusik.github.io/looplab/
+
+![Demo: drag the stick, the scope reacts; sweep Damping on the 7" preset and the step response loses its overshoot](docs/img/demo.gif)
 
 ![LoopLab — Betaflight mode, 5" preset](docs/img/screenshot.png)
 
@@ -27,7 +34,7 @@ The algorithms are ported from Betaflight (`pid.c`, `rc.c`, `filter.c`, `rpm_fil
 betaflight@f97bdbc), and every port cites its source file and function. The simulation is deterministic and does not
 depend on frame rate. The same seed and the same inputs give bitwise-identical output on 60, 144 and 240 Hz displays.
 
-## Features (v1 / M3)
+## Features
 
 - **Betaflight mode:** simplified-tuning sliders (master, damping, tracking, drift–wobble, D-max, stick response,
   pitch damping/tracking) that compute the exact firmware integers, and an Advanced tab with raw gains.
@@ -35,16 +42,17 @@ depend on frame rate. The same seed and the same inputs give bitwise-identical o
   (harmonics, min frequency, fade, Q). A group-delay readout shows each change.
 - **Noise:** motor fundamental plus 2nd/3rd harmonics, which follow RPM. Also a balance knob, an electrical noise floor
   and a frame resonance. A CG offset splits the left and right motors into two peak clusters.
-- **Analysis:** an ideal step response with latency to 50 % (PIDToolbox-style), overshoot, rise, settling and SSE,
+- **Analysis:** an ideal step response with latency to 50 % (PIDtoolbox-style), overshoot, rise, settling and SSE,
   where you can switch FF and RC smoothing on or off. A spectrum of the pre-filter gyro, post-filter gyro and
-  D-term in the PIDToolbox (PSSpec2d) convention, at a selectable Blackbox logging rate, with the masterclass
+  D-term in the PIDtoolbox (PSSpec2d) convention, at a selectable Blackbox logging rate, with the masterclass
   reference lines. A canvas scope with cursors and Δt.
 - **Motor temperature:** a qualitative thermal model (D noise and aggressive FF heat the motors).
-- **Presets:** 1S whoop, 5" freestyle 6S, 7" long-range 6S with a GoPro. Rates: Betaflight default, "my rates",
-  linear tuning rates. RC-link packet rate and flight style.
+- **Presets:** 1S whoop, 5" freestyle 6S, 7" long-range 6S with a GoPro. Rates: Betaflight default, smooth freestyle,
+  linear tuning rates. RC-link packet rate and the five Betaflight 2026.6 flight styles (Racing … Ultra Cinematic).
 - **Classic mode:** a beginner-friendly handle-and-follower toy. It uses a fixed step, a correct delay, and noise on
   every term.
-- Shareable URL state, a mobile layout down to about 380 px, and a "What am I looking at?" help drawer.
+- Shareable URL state, a mobile layout (checked at 390 px), keyboard and screen-reader support, and a "What am I
+  looking at?" help drawer.
 
 ## Masterclass lessons you can try
 
@@ -67,9 +75,8 @@ LoopLab was inspired by Joshua Bardwell's [PID Controller Simulator](https://www
 The original has no license, so **no code or styling was reused**: this is a new engine written from scratch. While
 building it we found two issues in the original. Its physics depends on the monitor refresh rate, and its delay buffer
 is wiped while the setpoint moves, which understates "delay + high P = runaway" (≈ 2.7× smaller oscillation in our
-emulation, `npm run findings`). Both are documented
-respectfully, with reproduction steps and minimal fixes, in [docs/FINDINGS.md](docs/FINDINGS.md). Classic mode keeps
-the original's pedagogy and fixes both.
+emulation, `npm run findings`). Both are documented respectfully, with reproduction steps and minimal fixes, in
+[docs/FINDINGS.md](docs/FINDINGS.md). Classic mode keeps the original's pedagogy and fixes both.
 
 ## Limitations
 
@@ -80,7 +87,7 @@ the original's pedagogy and fixes both.
   most of the 7" overshoot, and the default 5" noise floor sits at −40 dB. They are plausible for each class of craft
   but do not describe any particular build.
 - Not yet modelled: D-max, anti-gravity, TPA, the dynamic notch, battery sag and the pitch axis (M4).
-- The spectrum follows the PIDToolbox convention (Brian White's `PSSpec2d`: Hann, |Y|²/(fs·N), one-sided) on a
+- The spectrum follows the PIDtoolbox convention (Brian White's `PSSpec2d`: Hann, |Y|²/(fs·N), one-sided) on a
   Blackbox-decimated stream (1.6 / 2 / 3.2 / 4 kHz, default 2 kHz). The model's noise is calibrated against the
   masterclass guidelines rather than a real log, so a real quad may read differently (see
   [docs/MODEL.md §9a](docs/MODEL.md)).
@@ -120,9 +127,15 @@ before you push. Commits follow Conventional Commits.
 - **The Betaflight project** (GPL-3.0): the algorithms are referenced or ported from `src/main/flight/pid.c`, `pid.h`,
   `pid_init.c`, `src/main/fc/rc.c`, `src/main/common/filter.c`, `src/main/sensors/gyro.c`,
   `src/main/flight/rpm_filter.c`, `src/main/config/simplified_tuning.c` and `src/main/flight/mixer.c`.
-- **Brian White / PIDToolbox** provided the tuning procedure and analysis concepts (latency to 50 %, spectrum reading),
+- **Brian White / PIDtoolbox** provided the tuning procedure and analysis concepts (latency to 50 %, spectrum reading),
   via the Betaflight PID Tuning Masterclass with Joshua Bardwell. The spectrum scaling follows the convention of his
   `PSSpec2d.m` (Beer-Ware); no code was copied.
+
+## Disclaimer
+
+LoopLab is an independent project. It is **not affiliated with or endorsed by** the Betaflight project, Joshua Bardwell /
+FPV Know-It-All, or Brian White / PIDtoolbox. Their names are used only to describe where algorithms, ideas and
+conventions come from. LoopLab is an educational simulator, not tuning advice for a real aircraft.
 
 ## License
 

@@ -6,7 +6,7 @@ import { DEFAULT_STEP_OPTIONS, idealStepResponse } from '../stepResponse.ts';
 
 const DT = 1 / 8000;
 
-describe('Spec test 4 — PID', () => {
+describe('PID', () => {
   it('uses the Betaflight pid.h scale factors', () => {
     const pid = new BfPid(DEFAULT_PID, DEFAULT_FILTERS.dtermLpf1, DEFAULT_FILTERS.dtermLpf2, 0.3, DT);
     expect(pid.kp).toBeCloseTo(PTERM_SCALE * 45, 12);

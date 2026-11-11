@@ -3,15 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>LoopLab — Betaflight PID &amp; filter simulator</title>
     <meta
       name="description"
-      content="LoopLab — a Betaflight-faithful PID and filter simulator in the browser."
+      content="Drag a stick and watch a virtual quad's Betaflight rate loop react: PID, RPM filter, spectrum and step response, in your browser."
     />
     <meta name="theme-color" content="#0b0f14" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <title>LoopLab</title>
+    <link rel="canonical" href="https://bogdusik.github.io/looplab/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LoopLab" />
+    <meta property="og:title" content="LoopLab — Betaflight PID & filter simulator" />
+    <meta
+      property="og:description"
+      content="Drag a stick and watch a virtual quad's Betaflight rate loop react: PID, RPM filter, spectrum and step response, in your browser."
+    />
+    <meta property="og:url" content="https://bogdusik.github.io/looplab/" />
+    <meta property="og:image" content="https://bogdusik.github.io/looplab/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="LoopLab in the browser: stick track, scope with setpoint and gyro, step response and spectrum panels."
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LoopLab — Betaflight PID & filter simulator" />
+    <meta
+      name="twitter:description"
+      content="Drag a stick and watch a virtual quad's Betaflight rate loop react: PID, RPM filter, spectrum and step response, in your browser."
+    />
+    <meta name="twitter:image" content="https://bogdusik.github.io/looplab/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="LoopLab in the browser: stick track, scope with setpoint and gyro, step response and spectrum panels."
+    />
   </head>
   <body>
+    <noscript>LoopLab is an interactive simulator and needs JavaScript.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -115,13 +115,13 @@ and EMA coefficients derived from time constants instead of per-frame constants:
   match what the live view does.
 - The step response is recomputed every frame (2400 steps) and a 3600-element history array is copied every frame, so
   the whole app re-renders at frame rate.
-- Rise time is reported 10–90 %; PIDToolbox / Brian White use latency to 50 %.
+- Rise time is reported 10–90 %; PIDtoolbox / Brian White use latency to 50 %.
 
 ## What LoopLab's Classic mode does differently
 
-Fixed 1 ms step (`FixedStepClock`), a delay line that always applies exactly the configured delay (spec test 2),
+Fixed 1 ms step (`FixedStepClock`), a delay line that always applies exactly the configured delay (`classic.test.ts`),
 measurement noise on every term, time-constant EMAs, and a step-response panel that runs the _same_ pipeline as the live
-view. Render-rate invariance is a unit test (spec test 1). The legacy behaviour is kept only as a dev-only class
+view. Render-rate invariance is a unit test (`render-invariance.test.ts`). The legacy behaviour is kept only as a dev-only class
 (`LegacyClassicSim`) to generate the plots on this page: `npm run findings`.
 
 Thanks to Joshua Bardwell for the simulator and for inviting people to take it in their own direction.

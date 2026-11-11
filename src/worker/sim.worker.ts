@@ -23,6 +23,8 @@ declare const self: DedicatedWorkerGlobalScope;
 const TICK_MS = 16;
 const MAX_FRAME_SAMPLES = 400;
 const SPECTRUM_MAX_HZ = 1000;
+/** Off-screen warm-up after every (re)build of the Betaflight sim. */
+const WARMUP_S = 0.25;
 
 let mode: Mode = 'bf';
 let bfParams: BfParams | null = null;
@@ -78,6 +80,10 @@ function rebuild(keepThermal = false) {
   if (mode === 'bf') {
     const prev = bf;
     bf = new BfSim(bfParams);
+    // Warm up off-screen: notch/LPF states start at zero, so the motor-noise sinusoids would
+    // otherwise produce a start-up transient on every parameter change.
+    bf.setStick(stick);
+    bf.run(Math.round(WARMUP_S / bf.h));
     if (keepThermal && prev) {
       bf.thermalL.tempC = prev.thermalL.tempC;
       bf.thermalR.tempC = prev.thermalR.tempC;

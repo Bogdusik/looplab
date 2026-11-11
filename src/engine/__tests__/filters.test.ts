@@ -14,7 +14,7 @@ import { bisect, measureFilter } from './helpers.ts';
 
 const FS = 8000;
 
-describe('Spec test 3 — filters', () => {
+describe('filters', () => {
   const cases: [LpfType, number, number][] = [
     ['PT1', 100, 8000],
     ['PT1', 250, 8000],

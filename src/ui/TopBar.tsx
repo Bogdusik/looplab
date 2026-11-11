@@ -25,7 +25,7 @@ export function TopBar() {
 
   return (
     <header className="topbar">
-      <div className="brand">
+      <h1 className="brand">
         <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden>
           <rect width="32" height="32" rx="7" fill="#151c26" />
           <path
@@ -37,7 +37,7 @@ export function TopBar() {
           />
         </svg>
         LoopLab <small>PID &amp; filter lab</small>
-      </div>
+      </h1>
       <div className="seg" role="group" aria-label="Mode">
         <button aria-pressed={mode === 'bf'} onClick={() => actions.setMode('bf')}>
           Betaflight

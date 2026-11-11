@@ -1,22 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { actions, useStore } from '../state/store.ts';
 
 export function HelpDrawer() {
   const open = useStore((s) => s.helpOpen);
+  const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
+    const opener = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && actions.setHelp(false);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      opener?.focus();
+    };
   }, [open]);
   if (!open) return null;
   return (
     <>
       <div className="drawer-backdrop" onClick={() => actions.setHelp(false)} />
-      <aside className="drawer" role="dialog" aria-label="What am I looking at?">
+      <div className="drawer" role="dialog" aria-modal="true" aria-label="What am I looking at?">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h2 style={{ flex: 1 }}>What am I looking at?</h2>
-          <button className="btn ghost" onClick={() => actions.setHelp(false)} aria-label="Close help">
+          <button
+            ref={closeRef}
+            className="btn ghost"
+            onClick={() => actions.setHelp(false)}
+            aria-label="Close help"
+          >
             ✕
           </button>
         </div>
@@ -36,7 +47,7 @@ export function HelpDrawer() {
         <p>
           Top: setpoint vs gyro (deg/s). Bottom: P, I, D, FF in Betaflight PID units (±500 is full authority)
           and motor outputs. Pause to pan/zoom; click twice to measure Δt between two points — e.g. setpoint →
-          gyro delay, as in PIDToolbox.
+          gyro delay, as in PIDtoolbox.
         </p>
 
         <h3>Lesson 1 — hover → spectrum</h3>
@@ -96,16 +107,16 @@ export function HelpDrawer() {
           </li>
           <li>Not yet modelled (M4): D-max, anti-gravity, TPA, dynamic notch, battery sag, pitch axis.</li>
           <li>
-            Spectrum dB follows the PIDToolbox convention (Brian White&apos;s PSSpec2d) at the selected
+            Spectrum dB follows the PIDtoolbox convention (Brian White&apos;s PSSpec2d) at the selected
             Blackbox logging rate. Noise levels are calibrated so the masterclass guidelines read sensibly; a
             real log of the same craft may read differently.
           </li>
         </ul>
         <p style={{ color: 'var(--muted)', fontSize: 12 }}>
           Credits: Betaflight (GPL-3.0) for the algorithms; Joshua Bardwell for the inspiration; Brian White /
-          PIDToolbox for the tuning procedure.
+          PIDtoolbox for the tuning procedure.
         </p>
-      </aside>
+      </div>
     </>
   );
 }
