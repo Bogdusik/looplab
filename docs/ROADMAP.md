@@ -9,7 +9,6 @@ M0–M3 are done (scaffold, engine, UI, Betaflight slider layer + analysis + doc
 - Battery sag over a pack (≈ 4.2 → 3.5 V/cell) with a "fresh pack" button — latency changes with sag.
 - Pitch axis with inertia from the mass model (pitch damping / tracking sliders become live).
 - Bode plots of the gyro and D-term chains; gyro sample-rate aliasing demo (role of gyro LPF2).
-- Verify the RC-link preset values against `betaflight/firmware-presets` (open `TODO(verify)`).
 
 ## M5 — analysis like on a real quad
 
