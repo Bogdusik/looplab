@@ -19,7 +19,7 @@ export function HelpDrawer() {
   return (
     <>
       <div className="drawer-backdrop" onClick={() => actions.setHelp(false)} />
-      <aside className="drawer" role="dialog" aria-modal="true" aria-label="What am I looking at?">
+      <div className="drawer" role="dialog" aria-modal="true" aria-label="What am I looking at?">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h2 style={{ flex: 1 }}>What am I looking at?</h2>
           <button
@@ -116,7 +116,7 @@ export function HelpDrawer() {
           Credits: Betaflight (GPL-3.0) for the algorithms; Joshua Bardwell for the inspiration; Brian White /
           PIDtoolbox for the tuning procedure.
         </p>
-      </aside>
+      </div>
     </>
   );
 }
