@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { BLACKBOX_RATES, DEFAULT_BLACKBOX_HZ, type BlackboxRate } from '../engine/blackbox.ts';
 import { CLASSIC_DEFAULTS, type ClassicParams } from '../engine/classic.ts';
 import { DEFAULT_DRONE_ID, defaultBfParams, DRONE_PRESETS } from '../engine/presets.ts';
 import {
@@ -27,6 +28,8 @@ export interface Persisted {
   bf: BfParams;
   classic: ClassicParams;
   tuning: Tuning;
+  /** Blackbox logging rate used for the spectrum, Hz. */
+  blackboxHz: BlackboxRate;
 }
 
 export interface AppState extends Persisted {
@@ -54,6 +57,7 @@ export function defaultPersisted(droneId = DEFAULT_DRONE_ID): Persisted {
     bf: defaultBfParams(droneId),
     classic: { ...CLASSIC_DEFAULTS },
     tuning: structuredClone(DEFAULT_TUNING),
+    blackboxHz: DEFAULT_BLACKBOX_HZ,
   };
 }
 
@@ -82,6 +86,9 @@ function initialPersisted(): Persisted {
     bf: merge(fresh.bf, raw.bf),
     classic: merge(fresh.classic, raw.classic),
     tuning: merge(fresh.tuning, raw.tuning),
+    blackboxHz: (BLACKBOX_RATES as readonly unknown[]).includes(raw.blackboxHz)
+      ? (raw.blackboxHz as BlackboxRate)
+      : DEFAULT_BLACKBOX_HZ,
   };
 }
 
@@ -96,6 +103,7 @@ export function shareHash(s: Persisted): string {
   if (b !== undefined) payload.bf = b;
   if (c !== undefined) payload.classic = c;
   if (t !== undefined) payload.tuning = t;
+  if (s.blackboxHz !== DEFAULT_BLACKBOX_HZ) payload.blackboxHz = s.blackboxHz;
   return '#s=' + encodeState(payload as never);
 }
 
@@ -198,6 +206,9 @@ export const actions = {
   },
   toggleClassicTrace(k: ClassicChannel) {
     set({ classicTraces: { ...get().classicTraces, [k]: !get().classicTraces[k] } });
+  },
+  setBlackboxHz(blackboxHz: BlackboxRate) {
+    set({ blackboxHz, spectrum: null });
   },
   setStepOptions(o: { ff?: boolean; rcSmoothing?: boolean }) {
     set({ stepFf: o.ff ?? get().stepFf, stepRcSmoothing: o.rcSmoothing ?? get().stepRcSmoothing });

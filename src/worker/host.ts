@@ -38,6 +38,7 @@ export function startHost(): () => void {
   send({ type: 'params', mode: s0.mode, bf: s0.bf, classic: s0.classic });
   send({ type: 'control', paused: s0.paused, speed: s0.speed });
   send({ type: 'stepOptions', options: { feedforward: s0.stepFf, rcSmoothing: s0.stepRcSmoothing } });
+  send({ type: 'analysis', blackboxHz: s0.blackboxHz });
 
   let hashTimer: ReturnType<typeof setTimeout> | null = null;
   const unsub = useStore.subscribe((s, prev) => {
@@ -53,6 +54,7 @@ export function startHost(): () => void {
       scopeData.reset(s.mode);
       send({ type: 'reset' });
     }
+    if (s.blackboxHz !== prev.blackboxHz) send({ type: 'analysis', blackboxHz: s.blackboxHz });
     if (s.stepFf !== prev.stepFf || s.stepRcSmoothing !== prev.stepRcSmoothing) {
       send({ type: 'stepOptions', options: { feedforward: s.stepFf, rcSmoothing: s.stepRcSmoothing } });
     }
@@ -61,6 +63,7 @@ export function startHost(): () => void {
       s.bf !== prev.bf ||
       s.classic !== prev.classic ||
       s.tuning !== prev.tuning ||
+      s.blackboxHz !== prev.blackboxHz ||
       s.droneId !== prev.droneId
     ) {
       if (hashTimer) clearTimeout(hashTimer);

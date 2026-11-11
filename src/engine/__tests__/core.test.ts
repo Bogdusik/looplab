@@ -3,7 +3,8 @@ import { emaAlpha, FixedStepClock } from '../clock.ts';
 import { stepMetrics } from '../metrics.ts';
 import { Prng } from '../prng.ts';
 import { Ring } from '../ring.ts';
-import { fft, findPeaks, toDb, welch } from '../spectrum.ts';
+import { BlackboxDecimator } from '../blackbox.ts';
+import { fft, findPeaks, singleFftPsd, toDb, welch, whiteNoiseLevel } from '../spectrum.ts';
 import { bisect } from './helpers.ts';
 
 describe('PRNG', () => {
@@ -60,17 +61,62 @@ describe('FFT / Welch', () => {
     expect(Math.abs(re[11]!)).toBeLessThan(1e-9);
   });
 
-  it('Welch white-noise level equals 2σ²/fs and finds tone frequency', () => {
+  const bandMeanDb = (p: { f: Float64Array; psd: Float64Array }, a: number, b: number) => {
+    let sum = 0;
+    let n = 0;
+    for (let k = 0; k < p.f.length; k++)
+      if (p.f[k]! >= a && p.f[k]! <= b) {
+        sum += p.psd[k]!;
+        n++;
+      }
+    return toDb(sum / n);
+  };
+
+  it('PIDToolbox (PSSpec2d) scaling: white-noise floor = 10·log10(2·σ²·3/8 / fs), Welch and single FFT agree', () => {
+    for (const fs of [1600, 2000, 4000]) {
+      const sigma = 1.7;
+      const g = new Prng(fs);
+      const x = new Float64Array(fs * 40);
+      for (let i = 0; i < x.length; i++) x[i] = sigma * g.gauss();
+      const expected = toDb(whiteNoiseLevel(sigma * sigma, fs));
+      const w = welch(x, fs, 1024);
+      const one = singleFftPsd(x, fs);
+      expect(Math.abs(bandMeanDb(w, 20, fs * 0.45) - expected)).toBeLessThan(0.2);
+      expect(Math.abs(bandMeanDb(one, 20, fs * 0.45) - expected)).toBeLessThan(0.2);
+    }
+  });
+
+  it('pwelch-style density reads 10·log10(8/3) ≈ 4.26 dB higher than the PIDToolbox convention', () => {
+    const g = new Prng(3);
+    const x = new Float64Array(16384);
+    for (let i = 0; i < x.length; i++) x[i] = g.gauss();
+    const a = welch(x, 2000, 1024, 'pidtoolbox');
+    const b = welch(x, 2000, 1024, 'density');
+    for (const k of [10, 100, 300]) expect(toDb(b.psd[k]!) - toDb(a.psd[k]!)).toBeCloseTo(4.2597, 3);
+  });
+
+  it('finds a tone frequency', () => {
     const fs = 8000;
     const g = new Prng(1);
     const x = new Float64Array(fs * 8);
     for (let i = 0; i < x.length; i++) x[i] = g.gauss() + 3 * Math.sin((2 * Math.PI * 187.3 * i) / fs);
-    const p = welch(x, fs, 2048);
-    const mid = Array.from(p.psd.slice(400, 800));
-    const avg = mid.reduce((a, b) => a + b, 0) / mid.length;
-    expect(Math.abs(toDb(avg) - toDb(2 / fs))).toBeLessThan(0.5);
-    const pk = findPeaks(p, 50, 1000)[0]!;
+    const pk = findPeaks(welch(x, fs, 2048), 50, 1000)[0]!;
     expect(Math.abs(pk.f - 187.3)).toBeLessThan(1.5);
+  });
+});
+
+describe('Blackbox decimation', () => {
+  it('2 kHz from 8 kHz logs exactly every 4th sample; 3.2 kHz averages the right rate', () => {
+    const d = new BlackboxDecimator(8000, 2000);
+    const picked: number[] = [];
+    for (let i = 0; i < 40; i++) if (d.tick()) picked.push(i);
+    expect(picked).toEqual([0, 4, 8, 12, 16, 20, 24, 28, 32, 36]);
+    expect(d.exact).toBe(true);
+    const e = new BlackboxDecimator(8000, 3200);
+    let n = 0;
+    for (let i = 0; i < 80_000; i++) if (e.tick()) n++;
+    expect(n).toBe(32_000);
+    expect(e.exact).toBe(false);
   });
 });
 

@@ -60,10 +60,33 @@ function hann(n: number): Float64Array {
 }
 
 /**
- * Welch PSD estimate: Hann window, 50 % overlap, per-segment mean removal, one-sided,
- * density scaling (same convention as MATLAB `pwelch`, which PIDToolbox builds on).
+ * PSD scaling conventions.
+ *  - 'pidtoolbox': PIDToolbox convention (Brian White's PSSpec2d.m, Beer-Ware; convention only, no code
+ *    reused): Hann window, FFT, psd = |Y|² / (fs·N), one-sided ×2, no window-power correction.
+ *  - 'density': MATLAB `pwelch` density, |Y|² / (fs·Σw²). For a Hann window Σw²/N = 3/8, so 'density' reads
+ *    10·log10(8/3) ≈ +4.26 dB higher than 'pidtoolbox'.
  */
-export function welch(x: ArrayLike<number>, fs: number, nfft = 1024): Psd {
+export type PsdScaling = 'pidtoolbox' | 'density';
+
+/** Hann Σw²/N for a periodic window. */
+export const HANN_POWER = 0.375;
+
+/** Expected one-sided level of white noise with variance σ² sampled at fs (units²/Hz). */
+export function whiteNoiseLevel(sigma2: number, fs: number, scaling: PsdScaling = 'pidtoolbox'): number {
+  return scaling === 'pidtoolbox' ? (2 * sigma2 * HANN_POWER) / fs : (2 * sigma2) / fs;
+}
+
+/**
+ * Segment-averaged PSD: Hann segments of `nfft`, 50 % overlap, per-segment mean removal, one-sided.
+ * Averaging segments does not change the expected level, so with 'pidtoolbox' scaling the expected
+ * floor equals that of a single FFT over the whole record (see core.test.ts) — averaging only reduces variance.
+ */
+export function welch(
+  x: ArrayLike<number>,
+  fs: number,
+  nfft = 1024,
+  scaling: PsdScaling = 'pidtoolbox',
+): Psd {
   const n = nfft;
   const hop = n >> 1;
   const w = hann(n);
@@ -88,13 +111,28 @@ export function welch(x: ArrayLike<number>, fs: number, nfft = 1024): Psd {
   }
   const f = new Float64Array(bins);
   const psd = new Float64Array(bins);
-  const scale = segments > 0 ? 1 / (fs * wss * segments) : 0;
+  const norm = scaling === 'pidtoolbox' ? fs * n : fs * wss;
+  const scale = segments > 0 ? 1 / (norm * segments) : 0;
   for (let k = 0; k < bins; k++) {
     f[k] = (k * fs) / n;
     const oneSided = k === 0 || k === bins - 1 ? 1 : 2;
     psd[k] = acc[k]! * scale * oneSided;
   }
   return { f, psd, segments };
+}
+
+/** Single Hann-windowed FFT over the longest power-of-two prefix of `x` (PSSpec2d-style, one window). */
+export function singleFftPsd(x: ArrayLike<number>, fs: number, scaling: PsdScaling = 'pidtoolbox'): Psd {
+  let n = 1;
+  while (n * 2 <= x.length) n *= 2;
+  return welch(Array.prototype.slice.call(x, 0, n) as number[], fs, n, scaling);
+}
+
+/** FFT length giving ≈ 0.5 s segments at a given log rate (power of two). */
+export function spectrumNfft(fs: number): number {
+  let n = 256;
+  while (n / fs < 0.5) n *= 2;
+  return n;
 }
 
 export const toDb = (p: number) => 10 * Math.log10(Math.max(p, 1e-20));
