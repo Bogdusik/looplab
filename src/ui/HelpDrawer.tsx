@@ -1,22 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { actions, useStore } from '../state/store.ts';
 
 export function HelpDrawer() {
   const open = useStore((s) => s.helpOpen);
+  const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
+    const opener = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && actions.setHelp(false);
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      opener?.focus();
+    };
   }, [open]);
   if (!open) return null;
   return (
     <>
       <div className="drawer-backdrop" onClick={() => actions.setHelp(false)} />
-      <aside className="drawer" role="dialog" aria-label="What am I looking at?">
+      <aside className="drawer" role="dialog" aria-modal="true" aria-label="What am I looking at?">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h2 style={{ flex: 1 }}>What am I looking at?</h2>
-          <button className="btn ghost" onClick={() => actions.setHelp(false)} aria-label="Close help">
+          <button
+            ref={closeRef}
+            className="btn ghost"
+            onClick={() => actions.setHelp(false)}
+            aria-label="Close help"
+          >
             ✕
           </button>
         </div>

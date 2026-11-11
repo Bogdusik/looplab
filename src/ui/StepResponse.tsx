@@ -61,7 +61,16 @@ export function StepResponse() {
         <span>{mode === 'bf' ? `ideal · ${step?.amplitude.toFixed(0) ?? '—'}°/s` : 'classic · 0 → 50'}</span>
       }
     >
-      <div ref={host} className="uplot-host" />
+      <div
+        ref={host}
+        className="uplot-host"
+        role="img"
+        aria-label={
+          m
+            ? `Step response: latency to 50 percent ${ms(m.latency50)}, overshoot ${m.overshootPct.toFixed(1)} percent.`
+            : 'Step response'
+        }
+      />
       <div className="metrics">
         <div
           className="metric primary"
