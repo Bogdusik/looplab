@@ -3,6 +3,25 @@
   "private": true,
   "version": "0.1.0",
   "description": "Betaflight-faithful PID & filter simulator in the browser",
+  "keywords": [
+    "betaflight",
+    "fpv",
+    "pid",
+    "simulator",
+    "filters",
+    "rpm-filter",
+    "pidtoolbox",
+    "drone",
+    "education"
+  ],
+  "homepage": "https://bogdusik.github.io/looplab/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bogdusik/looplab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bogdusik/looplab/issues"
+  },
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
