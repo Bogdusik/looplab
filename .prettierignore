@@ -4,3 +4,5 @@ coverage
 package-lock.json
 SPEC.md
 docs/img
+docs/findings-data.json
+screens-tmp

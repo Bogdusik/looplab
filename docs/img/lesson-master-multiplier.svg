@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="760" height="360" fill="#ffffff"/>
+<text x="64" y="22" font-size="15" font-weight="600" fill="#111827">Master multiplier sweep — 5" freestyle preset (ideal step, FF off)</text>
+<text x="64" y="40" font-size="12" fill="#4b5563">Latency improvement flattens while D-term noise climbs towards the −10 dB guideline.</text>
+<g stroke="#e5e7eb" stroke-width="1">
+<line x1="64" x2="64" y1="56" y2="288"/>
+<line x1="149" x2="149" y1="56" y2="288"/>
+<line x1="234" x2="234" y1="56" y2="288"/>
+<line x1="319" x2="319" y1="56" y2="288"/>
+<line x1="403.99999999999994" x2="403.99999999999994" y1="56" y2="288"/>
+<line x1="489" x2="489" y1="56" y2="288"/>
+<line x1="574" x2="574" y1="56" y2="288"/>
+<line x1="658.9999999999999" x2="658.9999999999999" y1="56" y2="288"/>
+<line x1="744" x2="744" y1="56" y2="288"/>
+<line x1="64" x2="744" y1="288" y2="288"/>
+<line x1="64" x2="744" y1="259" y2="259"/>
+<line x1="64" x2="744" y1="230" y2="230"/>
+<line x1="64" x2="744" y1="201" y2="201"/>
+<line x1="64" x2="744" y1="172" y2="172"/>
+<line x1="64" x2="744" y1="143" y2="143"/>
+<line x1="64" x2="744" y1="114" y2="114"/>
+<line x1="64" x2="744" y1="85" y2="85"/>
+<line x1="64" x2="744" y1="56" y2="56"/>
+</g>
+<g font-size="11" fill="#4b5563">
+<text x="64" y="304" text-anchor="middle">0.6</text>
+<text x="149" y="304" text-anchor="middle">0.8</text>
+<text x="234" y="304" text-anchor="middle">1</text>
+<text x="319" y="304" text-anchor="middle">1.2</text>
+<text x="403.99999999999994" y="304" text-anchor="middle">1.4</text>
+<text x="489" y="304" text-anchor="middle">1.6</text>
+<text x="574" y="304" text-anchor="middle">1.8</text>
+<text x="658.9999999999999" y="304" text-anchor="middle">2</text>
+<text x="744" y="304" text-anchor="middle">2.2</text>
+<text x="58" y="292" text-anchor="end">-40</text>
+<text x="58" y="263" text-anchor="end">-30</text>
+<text x="58" y="234" text-anchor="end">-20</text>
+<text x="58" y="205" text-anchor="end">-10</text>
+<text x="58" y="176" text-anchor="end">0</text>
+<text x="58" y="147" text-anchor="end">10</text>
+<text x="58" y="118" text-anchor="end">20</text>
+<text x="58" y="89" text-anchor="end">30</text>
+<text x="58" y="60" text-anchor="end">40</text>
+<text x="404" y="322" text-anchor="middle" font-size="12">master multiplier</text>
+<text transform="translate(16 172) rotate(-90)" text-anchor="middle" font-size="12">ms  /  %  /  dB</text>
+</g>
+<rect x="64" y="56" width="680" height="232" fill="none" stroke="#9ca3af"/>
+<clipPath id="c"><rect x="64" y="56" width="680" height="232"/></clipPath>
+<line x1="64" x2="744" y1="201" y2="201" stroke="#dc2626" stroke-dasharray="5 4"/>
+<text x="740" y="197" text-anchor="end" font-size="11" fill="#dc2626">−10 dB D-term guideline</text>
+<g clip-path="url(#c)" fill="none" stroke-linejoin="round">
+<path d="M64.0 109.2L149.0 118.0L234.0 123.8L319.0 128.5L404.0 132.2L489.0 135.2L574.0 137.3L659.0 137.8L744.0 138.1" stroke="#2563eb" stroke-width="1.6"/>
+<path d="M64.0 154.2L149.0 161.8L234.0 168.5L319.0 170.1L404.0 168.5L489.0 165.1L574.0 158.1L659.0 148.3L744.0 134.8" stroke="#d97706" stroke-width="1.6"/>
+<path d="M64.0 263.5L149.0 255.7L234.0 247.8L319.0 240.6L404.0 233.7L489.0 226.6L574.0 218.9L659.0 210.7L744.0 201.7" stroke="#059669" stroke-width="1.6"/>
+</g>
+<g font-size="12" fill="#111827">
+<line x1="64" x2="86" y1="342" y2="342" stroke="#2563eb" stroke-width="2.5"/>
+<text x="92" y="346">latency to 50 % (ms)</text>
+<line x1="236" x2="258" y1="342" y2="342" stroke="#d97706" stroke-width="2.5"/>
+<text x="264" y="346">overshoot (%)</text>
+<line x1="361.8" x2="383.8" y1="342" y2="342" stroke="#059669" stroke-width="2.5"/>
+<text x="389.8" y="346">D-term PSD peak (dB)</text>
+</g></svg>
