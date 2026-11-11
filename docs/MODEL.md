@@ -28,7 +28,7 @@ expof  = |x| · (x⁵·expo + x·(1 − expo))
 rate   = x·center + max(0, max − center)·expof            (clamped to ±1998, rate_limit)
 ```
 
-Default 70 / 670 / 0.00 (`fc/controlrate_profile.c`: rcRates 7, rates 67, expo 0). Presets: "My rates" 50/670/0.45,
+Default 70 / 670 / 0.00 (`fc/controlrate_profile.c`: rcRates 7, rates 67, expo 0). Presets: "Smooth freestyle" 50/670/0.45,
 "Linear tuning rates" 400/400/0.
 
 **RC link.** Sample-and-hold of the stick at `packetHz` (50/150/250/500/1000), integer phase accumulator, stick
@@ -54,7 +54,10 @@ as-is. Defaults: averaging 2-point, smooth 65, jitter 7, boost 15, max-rate-limi
 **RC smoothing** — `rc.c processRcSmoothingFilter()`, per PID loop: PT3 on setpoint and on FF with cutoff
 `max(15, rxRate · 1.5 / (1 + auto_factor/10))` (`rcSmoothingSetFilterCutoffs()`), default factor 30 → 93.75 Hz at 250 Hz.
 
-RC-link "flight style" presets (Race / Freestyle / Cinematic) — **TODO(verify)** against `betaflight/firmware-presets`.
+RC-link "flight style" presets follow `betaflight/firmware-presets@bc81bff` `presets/2026.6/rc_link/crsf/crsf_auto.txt`.
+The feedforward settings come from `rc_link/defaults.txt` (2-point, 65, 7, 15) and are the same for every style. The style
+only sets `rc_smoothing_auto_factor`: Racing 25, Freestyle 50, HD Freestyle 70, Cinematic 90, Ultra Cinematic 180.
+At 250 Hz that gives smoothing cutoffs of 107 / 62.5 / 46.9 / 37.5 / 19.7 Hz.
 
 ## 3. PID (`engine/pid.ts`) — `flight/pid.c pidController()`, one acro axis
 

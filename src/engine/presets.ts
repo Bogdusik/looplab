@@ -49,22 +49,25 @@ export const DEFAULT_RC: RcConfig = {
 };
 
 /**
- * RC-link "flight style" presets in the spirit of the Betaflight Configurator RC-link presets.
- * TODO(verify): exact values against betaflight/firmware-presets (presets/4.5/rc_link/*).
+ * RC-link "flight style" presets, from betaflight/firmware-presets@bc81bff
+ * `presets/2026.6/rc_link/crsf/crsf_auto.txt`. It includes `rc_link/defaults.txt`, whose feedforward settings are the
+ * same for every style (2-point averaging, smooth 65, jitter 7, boost 15). The style option includes
+ * `rc_link/generic/auto_<style>.txt`, which only changes `rc_smoothing_auto_factor` (RPY):
+ * race 25, freestyle 50, HD freestyle 70, cinematic 90, ultra cinematic 180.
+ * The throttle auto factor is set as well but throttle is not simulated.
  */
+const RC_LINK_DEFAULTS: Partial<RcConfig> = {
+  ffAveraging: 1,
+  ffSmoothFactor: 65,
+  ffJitterFactor: 7,
+  ffBoost: 15,
+};
 export const RC_STYLE_PRESETS: Record<string, { label: string; patch: Partial<RcConfig> }> = {
-  race: {
-    label: 'Race',
-    patch: { autoFactor: 15, ffAveraging: 0, ffSmoothFactor: 35, ffJitterFactor: 4, ffBoost: 18 },
-  },
-  freestyle: {
-    label: 'Freestyle',
-    patch: { autoFactor: 30, ffAveraging: 1, ffSmoothFactor: 65, ffJitterFactor: 7, ffBoost: 15 },
-  },
-  cinematic: {
-    label: 'Cinematic',
-    patch: { autoFactor: 60, ffAveraging: 3, ffSmoothFactor: 80, ffJitterFactor: 12, ffBoost: 5 },
-  },
+  race: { label: 'Racing', patch: { ...RC_LINK_DEFAULTS, autoFactor: 25 } },
+  freestyle: { label: 'Freestyle', patch: { ...RC_LINK_DEFAULTS, autoFactor: 50 } },
+  hdFreestyle: { label: 'HD Freestyle', patch: { ...RC_LINK_DEFAULTS, autoFactor: 70 } },
+  cinematic: { label: 'Cinematic', patch: { ...RC_LINK_DEFAULTS, autoFactor: 90 } },
+  ultraCinematic: { label: 'Ultra Cinematic', patch: { ...RC_LINK_DEFAULTS, autoFactor: 180 } },
 };
 
 export const DEFAULT_PID: PidConfig = {

@@ -40,8 +40,8 @@ depend on frame rate. The same seed and the same inputs give bitwise-identical o
   D-term in the PIDToolbox (PSSpec2d) convention, at a selectable Blackbox logging rate, with the masterclass
   reference lines. A canvas scope with cursors and Δt.
 - **Motor temperature:** a qualitative thermal model (D noise and aggressive FF heat the motors).
-- **Presets:** 1S whoop, 5" freestyle 6S, 7" long-range 6S with a GoPro. Rates: Betaflight default, "my rates",
-  linear tuning rates. RC-link packet rate and flight style.
+- **Presets:** 1S whoop, 5" freestyle 6S, 7" long-range 6S with a GoPro. Rates: Betaflight default, smooth freestyle,
+  linear tuning rates. RC-link packet rate and the five Betaflight 2026.6 flight styles (Racing … Ultra Cinematic).
 - **Classic mode:** a beginner-friendly handle-and-follower toy. It uses a fixed step, a correct delay, and noise on
   every term.
 - Shareable URL state, a mobile layout down to about 380 px, and a "What am I looking at?" help drawer.
