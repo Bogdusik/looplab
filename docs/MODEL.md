@@ -151,11 +151,53 @@ and snappy inputs gets hot within 40 s (FF 0 is markedly cooler). Labels: warm �
   Metrics: latency to 50 % (primary), rise 10–90 %, overshoot, settling ±5 %, steady-state error (mean of last 10 %).
   Options: FF on/off (default off — a step has infinite stick speed, so FF fires one kick), RC smoothing on/off
   (default off — Blackbox logs the smoothed setpoint, so PIDToolbox latency excludes it).
-- **Spectrum:** Welch PSD, Hann, 50 % overlap, segment 1024 at 4 kHz ("blackbox rate", every 2nd sample), one-sided
-  density, `10·log10(units²/Hz)` (MATLAB `pwelch` convention). Reference lines −40 / −30 / −25 dB (gyro) and −10 dB
-  (D-term) are the masterclass guidelines. **TODO(verify):** PIDToolbox's exact dB scaling — the absolute position of
-  the reference lines relative to our curves depends on it; noise levels were calibrated so the lessons reproduce
-  (default 5": floor ≈ −38 dB, D-term ≈ −26 dB, crossing −10 dB near master ×2.2).
+- **Spectrum:** see §9a.
+
+## 9a. Spectrum convention and noise calibration (`engine/spectrum.ts`, `engine/blackbox.ts`)
+
+**Reference:** PIDToolbox's spectral analysis by Brian White (`PSSpec2d.m`, Beer-Ware license). We follow its
+_convention_ only; no code was copied.
+
+```
+x      = Blackbox-decimated stream at the logging rate fs (plain decimation, no anti-alias filter)
+Y      = FFT(hann(N) · (x − mean))                    periodic Hann, N = 2^k with N/fs ≈ 0.5 s
+psd    = |Y|² / (fs · N),  ×2 for 0 < f < fs/2         no window-power correction
+dB     = 10·log10(psd)
+```
+
+- Segments overlap 50 % and their PSDs are averaged. Averaging does not change the expected level (it only lowers the
+  variance), so the floor equals that of a single FFT over the record. `core.test.ts` checks both against the
+  analytic white-noise level `10·log10(2·σ²·(3/8)/fs)` (3/8 = Σw²/N for Hann) within 0.2 dB at 1.6, 2 and 4 kHz.
+- A MATLAB `pwelch`-style density (`/(fs·Σw²)`) reads `10·log10(8/3) ≈ +4.26 dB` higher. The test suite pins that
+  offset too, so the two conventions cannot be mixed up silently.
+- **Logging rate matters.** The same broadband noise reads +3 dB higher at 2 kHz than at 4 kHz (the variance is
+  spread over half the bandwidth), and decimation aliases content above fs/2 into the band, as on a real log.
+  Setting: 1.6 / 2 / 3.2 / 4 kHz, default **2 kHz** (masterclass: "Blackbox ≥ 2 kHz"). 2 and 4 kHz divide the
+  8 kHz gyro exactly. 1.6 and 3.2 kHz are native to 3.2 kHz gyros (e.g. BMI270), so here they are emulated by taking
+  the most recent gyro sample at each log tick, with up to one gyro period (125 µs) of timing jitter.
+
+**Calibration of the preset noise (2 kHz, this convention, default tune, hover):**
+
+| Preset        | Pre-filter floor (median 20 Hz…Nyquist) | Pre-filter motor peaks | D-term peak at master ×1 / ×2 / ×2.4 |
+| ------------- | --------------------------------------- | ---------------------- | ------------------------------------ |
+| 5" freestyle  | ≈ −40 dB (on the "great" line)          | ≈ +3 dB                | −30 / −16 / −10 dB                   |
+| 7" long-range | ≈ −41 dB                                | ≈ +6 dB                | −32 / −25 / −23 dB                   |
+| 1S whoop      | ≈ −34 dB (AIO whoops are noisy)         | ≈ +2 dB                | −21 / −2 / +22 dB (oscillating)      |
+
+How the masterclass guidelines read with these numbers:
+
+- **Floor −40 / −30 / −25 dB.** A clean default 5" sits at the −40 dB line. Raising `Noise → Electrical` ×2 moves it
+  to ≈ −34 dB, and ×5 to ≈ −26 dB ("investigate").
+- **D-term −10 dB.** On the 5", latency stops improving around master ×2 (11.8 ms vs 11.6 ms at ×2.4) and overshoot
+  starts rising, while D-term noise reaches −10 dB at ≈ ×2.4. The D-term guideline is therefore the last of the
+  stopping criteria to trigger, as in the masterclass procedure.
+- The D-term peak is driven mainly by broadband ("electrical") noise amplified by the closed loop near its resonance.
+  The motor harmonics are removed by the RPM filter, and doubling them leaves the D-term peak unchanged.
+- No preset noise amplitudes had to change when the convention moved from pwelch at 4 kHz to PSSpec2d at 2 kHz: the
+  −4.26 dB scaling change and the +3 dB rate change roughly cancel (net ≈ −1.5 dB on the D-term peak and ≈ −2.5 dB on the floor).
+
+The reference lines are guidelines from the masterclass, not physical limits. Because the model is calibrated, a real
+log of the same craft would not necessarily read the same dB values.
 
 ## 10. Classic mode (`engine/classic.ts`)
 
@@ -165,6 +207,10 @@ Mass on a track, 1 ms fixed step: `target` = PT1(handle, τ = 102.6 ms ≡ α 0.
 drag 0.1, delay 15 ms. `LegacyClassicSim` emulates the original's frame stepping for `docs/FINDINGS.md` only.
 
 ## 11. Preset numbers (approximate, plausible — not measurements)
+
+These numbers were **chosen so the masterclass lessons are visible**: for example, the 7" motor time constant (32 ms)
+makes the damping sweep remove most overshoot, and the noise amplitudes put the 5" floor at −40 dB. They are not
+measurements of any particular build.
 
 |                           | 1S whoop          | 5" freestyle 6S  | 7" long-range 6S + GoPro                  |
 | ------------------------- | ----------------- | ---------------- | ----------------------------------------- |

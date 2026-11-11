@@ -41,8 +41,8 @@ delay is therefore barely applied.
 | After release             | 122, 94, then 0                |
 
 So the effect is re-created on every frame while the target moves and for a couple of seconds after release, while the
-EMA-smoothed target is still converging. (The brief we started from measured ≈ 118/s and 3–5 s after release; the exact
-numbers depend on frame rate and how far the handle moved.)
+EMA-smoothed target is still converging. The exact counts depend on the browser's frame rate and on how far the handle
+moved.
 
 **Why it matters.** The core lesson "delay + high P = runaway" is understated exactly when the user is interacting.
 Our emulation of the mechanism (`LegacyClassicSim`, P = 20, D = 0, delay 30 ms, step at t = 0.5 s, 60 Hz frames):
@@ -55,8 +55,6 @@ Our emulation of the mechanism (`LegacyClassicSim`, P = 20, D = 0, delay 30 ms, 
 | Fixed (true 30 ms delay)        | **169** (≈ 2.7×)                     |
 
 ![Applied delay](img/bug1-applied-delay.svg)
-
-(The brief we started from reported 91 vs 271 in a Python port — the same ≈ 3× gap.)
 
 **Reproduction snippet** — paste in DevTools on the original page, then drag the handle:
 
@@ -93,9 +91,9 @@ Our emulation, default settings, sticks centred, 10 s:
 ![Bug #2 legacy](img/bug2-legacy-heat-vs-refresh.svg)
 ![Bug #2 fixed](img/bug2-fixed-heat-vs-refresh.svg)
 
-(The brief reported 1.22 OK / 3.02 WARM / 5.16 BURN at 60 / 144 / 240 Hz on the original page. We did not re-measure
-this on the live page because a headless browser does not give a controllable refresh rate; the emulation above shows
-the mechanism. Absolute heat units differ between models.)
+We did not measure this on the live page, because a headless browser does not give a controllable refresh rate. The
+emulation above shows the mechanism; its heat units are not the original's. All numbers on this page come from
+`npm run findings` (written to `docs/findings-data.json`), except the live re-creation counts in the Bug #1 table.
 
 **Minimal fix.** A fixed-step accumulator:
 
