@@ -1,0 +1,43 @@
+name: Bug report
+description: Something in the simulator looks wrong or doesn't work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time! The **Share** link is the most useful thing you can include:
+        it reproduces your exact settings.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: input
+    id: share-url
+    attributes:
+      label: Share URL
+      description: Click **Share** in the top bar and paste the link here.
+      placeholder: https://bogdusik.github.io/looplab/#s=…
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 142, Firefox 145, Safari 19…
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and OS
+      placeholder: MacBook Air M2 / macOS 26, Pixel 9 / Android 16, iPhone 16 / iOS 26…
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, console errors, or a Betaflight / PIDtoolbox reference if the model disagrees with real firmware.

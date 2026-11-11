@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a lesson, a model improvement or a UI idea
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to learn or do?
+      description: The tuning question or workflow this would help with.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What should LoopLab do? If it involves Betaflight behaviour, please name the firmware file / function if you know it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or references
