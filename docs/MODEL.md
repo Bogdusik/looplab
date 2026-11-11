@@ -184,6 +184,10 @@ dB     = 10·log10(psd)
 | 7" long-range | ≈ −41 dB                                | ≈ +6 dB                | −32 / −25 / −23 dB                   |
 | 1S whoop      | ≈ −34 dB (AIO whoops are noisy)         | ≈ +2 dB                | −21 / −2 / +22 dB (oscillating)      |
 
+Default 5" hover at 2 kHz, as the app shows it:
+
+<img src="img/spectrum-panel.png" alt="Default 5-inch hover spectrum, 2 kHz log" width="380">
+
 How the masterclass guidelines read with these numbers:
 
 - **Floor −40 / −30 / −25 dB.** A clean default 5" sits at the −40 dB line. Raising `Noise → Electrical` ×2 moves it
