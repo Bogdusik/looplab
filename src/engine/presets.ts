@@ -29,7 +29,10 @@ export const DEFAULT_RATES: RatesConfig = { centerRate: 70, maxRate: 670, expo: 
 
 export const RATE_PRESETS: Record<string, { label: string; rates: RatesConfig }> = {
   bfDefault: { label: 'Betaflight default (70 / 670 / 0.00)', rates: DEFAULT_RATES },
-  mine: { label: 'My rates (50 / 670 / 0.45)', rates: { centerRate: 50, maxRate: 670, expo: 0.45 } },
+  smoothFreestyle: {
+    label: 'Smooth freestyle (50 / 670 / 0.45)',
+    rates: { centerRate: 50, maxRate: 670, expo: 0.45 },
+  },
   // Linear: centre sensitivity == max rate → straight line; for wobble / tuning tests.
   linear: { label: 'Linear tuning rates (400 / 400 / 0)', rates: { centerRate: 400, maxRate: 400, expo: 0 } },
 };

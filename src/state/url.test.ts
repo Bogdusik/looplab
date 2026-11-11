@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultBfParams } from '../engine/presets.ts';
+import { defaultBfParams, RATE_PRESETS } from '../engine/presets.ts';
 import { decodeState, diff, encodeState, merge, readHashState } from './url.ts';
 
 describe('URL state', () => {
@@ -20,5 +20,13 @@ describe('URL state', () => {
     const a = defaultBfParams();
     const m = merge(a, { pid: { gains: { p: 'x', nope: 1 } }, evil: true });
     expect(m).toEqual(a);
+  });
+
+  it('links made before the "My rates" → "Smooth freestyle" rename still load the same rates', () => {
+    // v0.1.0-pre links store rate values, never the preset key
+    const legacy = encodeState({ droneId: 'freestyle5', bf: { rates: { centerRate: 50, expo: 0.45 } } });
+    const raw = readHashState('#s=' + legacy) as { bf: unknown };
+    const bf = merge(defaultBfParams(), raw.bf);
+    expect(bf.rates).toEqual(RATE_PRESETS.smoothFreestyle!.rates);
   });
 });

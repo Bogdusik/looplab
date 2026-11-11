@@ -11,7 +11,7 @@ describe('ACTUAL rates (rc.c applyActualRates)', () => {
     expect(actualRate(0.5, DEFAULT_RATES)).toBeCloseTo(0.5 * 70 + 600 * 0.25, 9);
   });
   it('expo flattens the middle', () => {
-    const mine = RATE_PRESETS.mine!.rates;
+    const mine = RATE_PRESETS.smoothFreestyle!.rates;
     expect(actualRate(1, mine)).toBeCloseTo(670, 9);
     expect(actualRate(0.5, mine)).toBeLessThan(actualRate(0.5, { ...mine, expo: 0 }));
   });
