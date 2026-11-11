@@ -171,7 +171,7 @@ drag 0.1, delay 15 ms. `LegacyClassicSim` emulates the original's frame stepping
 | AUW                       | ≈ 31 g            | ≈ 608 g          | ≈ 1040 g                                  |
 | Arm (centre→motor)        | 32.5 mm           | 110 mm           | 155 mm                                    |
 | Motor                     | 0802 22000 KV, 1S | 2207 1850 KV, 6S | 2806.5 1300 KV, 6S                        |
-| τ_motor                   | 14 ms             | 22 ms            | 45 ms                                     |
+| τ_motor                   | 14 ms             | 22 ms            | 32 ms                                     |
 | Hover throttle / TWR      | 0.50 / 3.5        | 0.28 / 9.8       | 0.40 / 5.4                                |
 | Hover motor frequency     | ≈ 400 Hz          | ≈ 173 Hz         | ≈ 170 Hz                                  |
 | J_roll / J_pitch (kg·cm²) | 0.11 / 0.12       | 13.6 / 16.4      | 40.3 / 64.0                               |
