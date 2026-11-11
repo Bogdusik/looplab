@@ -72,7 +72,7 @@ describe('FFT / Welch', () => {
     return toDb(sum / n);
   };
 
-  it('PIDToolbox (PSSpec2d) scaling: white-noise floor = 10·log10(2·σ²·3/8 / fs), Welch and single FFT agree', () => {
+  it('PIDtoolbox (PSSpec2d) scaling: white-noise floor = 10·log10(2·σ²·3/8 / fs), Welch and single FFT agree', () => {
     for (const fs of [1600, 2000, 4000]) {
       const sigma = 1.7;
       const g = new Prng(fs);
@@ -86,7 +86,7 @@ describe('FFT / Welch', () => {
     }
   });
 
-  it('pwelch-style density reads 10·log10(8/3) ≈ 4.26 dB higher than the PIDToolbox convention', () => {
+  it('pwelch-style density reads 10·log10(8/3) ≈ 4.26 dB higher than the PIDtoolbox convention', () => {
     const g = new Prng(3);
     const x = new Float64Array(16384);
     for (let i = 0; i < x.length; i++) x[i] = g.gauss();

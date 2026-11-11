@@ -115,7 +115,7 @@ and EMA coefficients derived from time constants instead of per-frame constants:
   match what the live view does.
 - The step response is recomputed every frame (2400 steps) and a 3600-element history array is copied every frame, so
   the whole app re-renders at frame rate.
-- Rise time is reported 10–90 %; PIDToolbox / Brian White use latency to 50 %.
+- Rise time is reported 10–90 %; PIDtoolbox / Brian White use latency to 50 %.
 
 ## What LoopLab's Classic mode does differently
 

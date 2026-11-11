@@ -199,7 +199,7 @@ const COLORS = { c60: '#2563eb', c144: '#d97706', c240: '#dc2626', fixed: '#0596
     overshoot.push(r.metrics.overshootPct);
     const sim = new BfSim(p);
     sim.run(8000);
-    // D-term spectrum on the default 2 kHz Blackbox stream, PIDToolbox (PSSpec2d) scaling
+    // D-term spectrum on the default 2 kHz Blackbox stream, PIDtoolbox (PSSpec2d) scaling
     const fs = DEFAULT_BLACKBOX_HZ;
     const dec = new BlackboxDecimator(p.loop.gyroHz, fs);
     const d: number[] = [];
@@ -220,7 +220,7 @@ const COLORS = { c60: '#2563eb', c144: '#d97706', c240: '#dc2626', fixed: '#0596
     linePlot({
       title: 'Master multiplier sweep — 5" freestyle preset (ideal step, FF off)',
       subtitle:
-        'Latency flattens around ×2 while D-term noise (2 kHz log, PIDToolbox scaling) climbs towards −10 dB.',
+        'Latency flattens around ×2 while D-term noise (2 kHz log, PIDtoolbox scaling) climbs towards −10 dB.',
       xLabel: 'master multiplier',
       yLabel: 'ms  /  %  /  dB',
       yRange: [-40, 40],

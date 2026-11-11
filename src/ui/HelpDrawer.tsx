@@ -36,7 +36,7 @@ export function HelpDrawer() {
         <p>
           Top: setpoint vs gyro (deg/s). Bottom: P, I, D, FF in Betaflight PID units (±500 is full authority)
           and motor outputs. Pause to pan/zoom; click twice to measure Δt between two points — e.g. setpoint →
-          gyro delay, as in PIDToolbox.
+          gyro delay, as in PIDtoolbox.
         </p>
 
         <h3>Lesson 1 — hover → spectrum</h3>
@@ -96,14 +96,14 @@ export function HelpDrawer() {
           </li>
           <li>Not yet modelled (M4): D-max, anti-gravity, TPA, dynamic notch, battery sag, pitch axis.</li>
           <li>
-            Spectrum dB follows the PIDToolbox convention (Brian White&apos;s PSSpec2d) at the selected
+            Spectrum dB follows the PIDtoolbox convention (Brian White&apos;s PSSpec2d) at the selected
             Blackbox logging rate. Noise levels are calibrated so the masterclass guidelines read sensibly; a
             real log of the same craft may read differently.
           </li>
         </ul>
         <p style={{ color: 'var(--muted)', fontSize: 12 }}>
           Credits: Betaflight (GPL-3.0) for the algorithms; Joshua Bardwell for the inspiration; Brian White /
-          PIDToolbox for the tuning procedure.
+          PIDtoolbox for the tuning procedure.
         </p>
       </aside>
     </>

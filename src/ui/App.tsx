@@ -38,7 +38,7 @@ export function App() {
       </main>
       <footer className="footer">
         GPL-3.0 · Algorithms ported from Betaflight · Inspired by Joshua Bardwell&apos;s PID Controller
-        Simulator · Tuning procedure: Brian White / PIDToolbox · Educational model — gains need calibration
+        Simulator · Tuning procedure: Brian White / PIDtoolbox · Educational model — gains need calibration
         before they transfer to a real quad.
       </footer>
       <HelpDrawer />

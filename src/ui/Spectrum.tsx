@@ -28,7 +28,7 @@ const DTERM_LINES: RefLine[] = [
 
 /**
  * PSD of pre-filter gyro, post-filter gyro and the D term on the Blackbox-decimated stream,
- * PIDToolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided ×2, 10·log10.
+ * PIDtoolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided ×2, 10·log10.
  */
 export function Spectrum() {
   const spec = useStore((s) => s.spectrum);
@@ -201,7 +201,7 @@ export function Spectrum() {
         )}
       </p>
       <p className="note">
-        PIDToolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided, 10·log10; 0.5 s segments averaged.
+        PIDtoolbox convention (PSSpec2d): Hann, |Y|²/(fs·N), one-sided, 10·log10; 0.5 s segments averaged.
         {blackboxHz === 1600 || blackboxHz === 3200
           ? ' 1.6 / 3.2 kHz are native to 3.2 kHz gyros; here they are picked from the 8 kHz stream.'
           : ''}

@@ -20,6 +20,6 @@ M0–M3 are done (scaffold, engine, UI, Betaflight slider layer + analysis + doc
 
 ## M6 — digital twin
 
-- Blackbox CSV import (Blackbox Explorer export) and export (sim → CSV that opens in Blackbox Explorer / PIDToolbox).
+- Blackbox CSV import (Blackbox Explorer export) and export (sim → CSV that opens in Blackbox Explorer / PIDtoolbox).
 - System identification (τ_m, J-gain, delay, noise profile) from wobble or chirp logs (incl. Betaflight 2026.06 chirp
   logs) for a calibrated "what-if" mode.

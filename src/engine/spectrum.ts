@@ -61,7 +61,7 @@ function hann(n: number): Float64Array {
 
 /**
  * PSD scaling conventions.
- *  - 'pidtoolbox': PIDToolbox convention (Brian White's PSSpec2d.m, Beer-Ware; convention only, no code
+ *  - 'pidtoolbox': PIDtoolbox convention (Brian White's PSSpec2d.m, Beer-Ware; convention only, no code
  *    reused): Hann window, FFT, psd = |Y|² / (fs·N), one-sided ×2, no window-power correction.
  *  - 'density': MATLAB `pwelch` density, |Y|² / (fs·Σw²). For a Hann window Σw²/N = 3/8, so 'density' reads
  *    10·log10(8/3) ≈ +4.26 dB higher than 'pidtoolbox'.
