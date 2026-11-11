@@ -4,7 +4,7 @@
 rate loop react. Look at the spectrum and the step response, and work through the
 [Bardwell × Brian White masterclass](https://www.youtube.com/watch?v=FsJNHI2HWlg) lessons before you touch a real quad.
 
-**Live demo:** _coming soon (GitHub Pages; the `deploy.yml` workflow publishes `main`)_
+**Live demo:** https://bogdusik.github.io/looplab/
 
 ![LoopLab — Betaflight mode, 5" preset](docs/img/screenshot.png)
 
