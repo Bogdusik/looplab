@@ -51,7 +51,8 @@ depend on frame rate. The same seed and the same inputs give bitwise-identical o
   linear tuning rates. RC-link packet rate and the five Betaflight 2026.6 flight styles (Racing … Ultra Cinematic).
 - **Classic mode:** a beginner-friendly handle-and-follower toy. It uses a fixed step, a correct delay, and noise on
   every term.
-- Shareable URL state, a mobile layout down to about 380 px, and a "What am I looking at?" help drawer.
+- Shareable URL state, a mobile layout (checked at 390 px), keyboard and screen-reader support, and a "What am I
+  looking at?" help drawer.
 
 ## Masterclass lessons you can try
 
@@ -74,9 +75,8 @@ LoopLab was inspired by Joshua Bardwell's [PID Controller Simulator](https://www
 The original has no license, so **no code or styling was reused**: this is a new engine written from scratch. While
 building it we found two issues in the original. Its physics depends on the monitor refresh rate, and its delay buffer
 is wiped while the setpoint moves, which understates "delay + high P = runaway" (≈ 2.7× smaller oscillation in our
-emulation, `npm run findings`). Both are documented
-respectfully, with reproduction steps and minimal fixes, in [docs/FINDINGS.md](docs/FINDINGS.md). Classic mode keeps
-the original's pedagogy and fixes both.
+emulation, `npm run findings`). Both are documented respectfully, with reproduction steps and minimal fixes, in
+[docs/FINDINGS.md](docs/FINDINGS.md). Classic mode keeps the original's pedagogy and fixes both.
 
 ## Limitations
 
