@@ -8,6 +8,11 @@ rate loop react. Look at the spectrum and the step response, and work through th
 
 ![LoopLab — Betaflight mode, 5" preset](docs/img/screenshot.png)
 
+<p>
+  <img src="docs/img/classic-mode.png" alt="Classic mode" width="66%">
+  <img src="docs/img/mobile.png" alt="Mobile layout (390 px)" width="28%">
+</p>
+
 ## What it is
 
 The simulator models the actual Betaflight control pipeline on one axis (roll):
@@ -31,8 +36,9 @@ depend on frame rate. The same seed and the same inputs give bitwise-identical o
 - **Noise:** motor fundamental plus 2nd/3rd harmonics, which follow RPM. Also a balance knob, an electrical noise floor
   and a frame resonance. A CG offset splits the left and right motors into two peak clusters.
 - **Analysis:** an ideal step response with latency to 50 % (PIDToolbox-style), overshoot, rise, settling and SSE,
-  where you can switch FF and RC smoothing on or off. A Welch spectrum of the pre-filter gyro, post-filter gyro and
-  D-term, with the masterclass reference lines. A canvas scope with cursors and Δt.
+  where you can switch FF and RC smoothing on or off. A spectrum of the pre-filter gyro, post-filter gyro and
+  D-term in the PIDToolbox (PSSpec2d) convention, at a selectable Blackbox logging rate, with the masterclass
+  reference lines. A canvas scope with cursors and Δt.
 - **Motor temperature:** a qualitative thermal model (D noise and aggressive FF heat the motors).
 - **Presets:** 1S whoop, 5" freestyle 6S, 7" long-range 6S with a GoPro. Rates: Betaflight default, "my rates",
   linear tuning rates. RC-link packet rate and flight style.
@@ -60,16 +66,24 @@ depend on frame rate. The same seed and the same inputs give bitwise-identical o
 LoopLab was inspired by Joshua Bardwell's [PID Controller Simulator](https://www.fpvknowitall.com/pid-controller-simulator/).
 The original has no license, so **no code or styling was reused**: this is a new engine written from scratch. While
 building it we found two issues in the original. Its physics depends on the monitor refresh rate, and its delay buffer
-is wiped while the setpoint moves, which understates "delay + high P = runaway" by about 3×. Both are documented
+is wiped while the setpoint moves, which understates "delay + high P = runaway" (≈ 2.7× smaller oscillation in our
+emulation, `npm run findings`). Both are documented
 respectfully, with reproduction steps and minimal fixes, in [docs/FINDINGS.md](docs/FINDINGS.md). Classic mode keeps
 the original's pedagogy and fixes both.
 
 ## Limitations
 
-- This is an educational model of one axis. Physical numbers are plausible approximations, so **absolute gains
-  transfer to a real quad only after calibration** (system identification is planned for M6).
+- This is an educational model of one axis, so **absolute gains transfer to a real quad only after calibration**
+  (system identification is planned for M6).
+- **Preset parameters are not measurements.** Values such as the 7" motor time constant (32 ms), the noise amplitudes
+  and the transport delays were chosen so the masterclass lessons are visible. For example, the damping sweep removes
+  most of the 7" overshoot, and the default 5" noise floor sits at −40 dB. They are plausible for each class of craft
+  but do not describe any particular build.
 - Not yet modelled: D-max, anti-gravity, TPA, the dynamic notch, battery sag and the pitch axis (M4).
-- The spectrum uses MATLAB-style PSD dB. Whether that matches PIDToolbox's scaling exactly is still `TODO(verify)`.
+- The spectrum follows the PIDToolbox convention (Brian White's `PSSpec2d`: Hann, |Y|²/(fs·N), one-sided) on a
+  Blackbox-decimated stream (1.6 / 2 / 3.2 / 4 kHz, default 2 kHz). The model's noise is calibrated against the
+  masterclass guidelines rather than a real log, so a real quad may read differently (see
+  [docs/MODEL.md §9a](docs/MODEL.md)).
 - Equations, parameters and sources are in [docs/MODEL.md](docs/MODEL.md).
 
 ## Development
@@ -107,7 +121,8 @@ before you push. Commits follow Conventional Commits.
   `pid_init.c`, `src/main/fc/rc.c`, `src/main/common/filter.c`, `src/main/sensors/gyro.c`,
   `src/main/flight/rpm_filter.c`, `src/main/config/simplified_tuning.c` and `src/main/flight/mixer.c`.
 - **Brian White / PIDToolbox** provided the tuning procedure and analysis concepts (latency to 50 %, spectrum reading),
-  via the Betaflight PID Tuning Masterclass with Joshua Bardwell.
+  via the Betaflight PID Tuning Masterclass with Joshua Bardwell. The spectrum scaling follows the convention of his
+  `PSSpec2d.m` (Beer-Ware); no code was copied.
 
 ## License
 
