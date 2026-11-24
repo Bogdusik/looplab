@@ -95,6 +95,8 @@ emulation, `npm run findings`). Both are documented respectfully, with reproduct
 
 ## Development
 
+### Run locally
+
 ```bash
 npm ci
 npm run dev          # http://localhost:5173
